@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../features/splash/screen/splash_screen.dart';
+import 'package:eventra/features/auth/screens/login_screen.dart';
 
 class EventraApp extends StatelessWidget {
   const EventraApp({super.key});
@@ -9,7 +10,7 @@ class EventraApp extends StatelessWidget {
     return MaterialApp(
       title: 'Eventra',
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: LoginScreen(),
     );
   }
 }
