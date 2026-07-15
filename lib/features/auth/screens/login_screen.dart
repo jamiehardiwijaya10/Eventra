@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../widgets/custom_text_field.dart';
-import '../widgets/custom_button.dart';
+import '../../../shared/widgets/custom_button.dart';
+import '../../../shared/widgets/custom_text_field.dart';
+import '../../../shared/widgets/custom_app_bar.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -10,6 +11,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(title: "Login"),
       backgroundColor: Colors.orange,
       body: Padding(
         padding: EdgeInsetsGeometry.all(24),
@@ -17,14 +19,14 @@ class LoginScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 40),
-
+            
             const Text(
               "Welcome Back",
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-                ),
+              ),
             ),
 
             const SizedBox(height: 10),
