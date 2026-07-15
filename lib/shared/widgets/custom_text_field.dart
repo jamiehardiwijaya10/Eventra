@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_color.dart';
 
 class CustomTextField extends StatelessWidget {
   final String hintText;
@@ -21,10 +22,23 @@ class CustomTextField extends StatelessWidget {
       obscureText: obscureText,
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: Icon(prefixIcon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-        )
+        prefixIcon: Icon(
+          prefixIcon,
+          color: AppColor.white,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: AppColor.border,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(
+            color: AppColor.primary,
+            width: 2,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
       ),
     );
   }
