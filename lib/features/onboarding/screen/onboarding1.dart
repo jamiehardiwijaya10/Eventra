@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_style.dart';
-import '../../../shared/widgets/custom_button.dart';
+import '../../../core/theme/app_color.dart';
+import '../../../app/routes.dart';
 
-class OnboardingScreen extends StatelessWidget {
-  const OnboardingScreen({super.key});
+class OnboardingScreen1 extends StatelessWidget {
+  const OnboardingScreen1({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +48,14 @@ class OnboardingScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
                 decoration: const BoxDecoration(
-                  color: Colors.orange,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      AppColor.primary,
+                      AppColor.secondary,
+                    ],
+                  ),
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(35),
                   ),
@@ -111,14 +119,23 @@ class OnboardingScreen extends StatelessWidget {
 
                         TextButton(
                           onPressed: () {},
-                          child: const Text("Skip"),
+                          child: const Text(
+                            "Skip",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
 
-                        SizedBox(
-                          width: 120,
-                          child: CustomButton(
-                            text: "Next",
-                            onPressed: () {},
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.onboarding2);
+                          },
+                          child: const Text(
+                            "Next",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ],
