@@ -4,6 +4,7 @@ import '../../../shared/widgets/custom_text_field.dart';
 import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/constant/app_strings.dart';
+import '../../../app/routes.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -60,7 +61,12 @@ class LoginScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Don't have an account?"),
-                TextButton(onPressed: () {}, child: const Text(AppStrings.register)),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.register);
+                  },
+                  child: const Text(AppStrings.register),
+                ),
               ],
             ),
           ],

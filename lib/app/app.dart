@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // import '../features/splash/screen/splash_screen.dart';
-import 'package:eventra/features/auth/screens/login_screen.dart';
 import '../app/app_theme.dart';
+import 'routes.dart';
 
 class EventraApp extends StatelessWidget {
   const EventraApp({super.key});
@@ -12,7 +12,8 @@ class EventraApp extends StatelessWidget {
       title: 'Eventra',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: LoginScreen(),
+      initialRoute: AppRoutes.splash,
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }
