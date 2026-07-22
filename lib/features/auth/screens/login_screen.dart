@@ -48,12 +48,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               bodyColor: AppColor.black,
                               borderColor: AppColor.border,
                               isPasswordVisible: _IsPasswordVisible,
+                              onTogglePasswordVisibility: () {
+                                setState(() {
+                                  _IsPasswordVisible = !_IsPasswordVisible;
+                                });
+                              }
                             ),
 
                             const SizedBox(height: 30,),
                             _LoginButton(btnColor: AppColor.black),
 
-                            const SizedBox(height: 10,),
+                            const SizedBox(height: 15,),
                             _SocialLogin(bodyColor: AppColor.black, darkColor: AppColor.black, borderColor: AppColor.border),
                             _FooterSection(primaryColor: AppColor.primary, bodyColor: AppColor.black)
                             
@@ -118,6 +123,7 @@ class _LoginHeader extends StatelessWidget {
           ),
         ),
 
+        SizedBox(height: 5,),
         Text("Enter your credentials to access your account", style: AppTextStyle.body
         ),
       ],
@@ -128,13 +134,16 @@ class _LoginHeader extends StatelessWidget {
 class _LoginForms extends StatelessWidget {
   final Color primaryColor, darkColor, bodyColor, borderColor;
   final bool isPasswordVisible;
+  final VoidCallback onTogglePasswordVisibility;
 
   const _LoginForms({
+    super.key,
     required this.primaryColor,
     required this.darkColor,
     required this.bodyColor,
     required this.borderColor,
     required this.isPasswordVisible,
+    required this.onTogglePasswordVisibility
   });
 
   @override
@@ -146,7 +155,7 @@ class _LoginForms extends StatelessWidget {
         _inputField(Icons.mail_outline_rounded, "Enter your email"),
         const SizedBox(height: 24,),
         _label("Password"),
-        _inputField(Icons.lock_open_rounded, "Enter your password", isPassword: true, suffix: IconButton(onPressed: (){}, icon: Icon(isPasswordVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20, color: bodyColor,)) )
+        _inputField(Icons.lock_open_rounded, "Enter your password", isPassword: true, suffix: IconButton(onPressed: onTogglePasswordVisibility, icon: Icon(isPasswordVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20, color: bodyColor,)) )
       ],
     );
   }
@@ -193,6 +202,19 @@ class _LoginForms extends StatelessWidget {
     );
   }
 }
+
+class _forgotPassword extends StatelessWidget {
+  final Color primaryColor;
+  const _forgotPassword({required this.primaryColor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+
+    );
+  }
+}
+
 
 // Login Button
 class _LoginButton extends StatelessWidget {
