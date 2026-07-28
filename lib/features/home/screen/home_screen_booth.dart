@@ -23,8 +23,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
         child:SingleChildScrollView(
           child: Stack(
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
+              Positioned.fill(
                 child: Column(
                   children: [
                     Expanded(
