@@ -24,8 +24,7 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
         child:SingleChildScrollView(
           child: Stack(
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height,
+              Positioned.fill(
                 child: Column(
                   children: [
                     Expanded(
