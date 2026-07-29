@@ -19,6 +19,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _IsLoading = false;
   bool _IsPasswordVisible = false;
+  bool _IsConfirmPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
 
                             const SizedBox(height: 48,),
+
                             _LoginForms(
                               primaryColor: AppColor.primary,
                               darkColor: AppColor.black,
@@ -52,10 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 setState(() {
                                   _IsPasswordVisible = !_IsPasswordVisible;
                                 });
-                              }
+                              },
                             ),
 
-                            const SizedBox(height: 30,),
+                            const SizedBox(height: 5,),
                             _LoginButton(btnColor: AppColor.black),
 
                             const SizedBox(height: 15,),
@@ -74,6 +76,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+
 
 // The Circle Shi
 class _BGDecoration extends StatelessWidget {
@@ -143,7 +147,7 @@ class _LoginForms extends StatelessWidget {
     required this.bodyColor,
     required this.borderColor,
     required this.isPasswordVisible,
-    required this.onTogglePasswordVisibility
+    required this.onTogglePasswordVisibility,
   });
 
   @override
@@ -153,9 +157,23 @@ class _LoginForms extends StatelessWidget {
       children: [
         _label("Email Address"),
         _inputField(Icons.mail_outline_rounded, "Enter your email"),
+
         const SizedBox(height: 24,),
+
         _label("Password"),
-        _inputField(Icons.lock_open_rounded, "Enter your password", isPassword: true, suffix: IconButton(onPressed: onTogglePasswordVisibility, icon: Icon(isPasswordVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20, color: bodyColor,)) )
+        _inputField(Icons.lock_open_rounded, "Enter your password", isPassword: true, suffix: IconButton(
+            onPressed: onTogglePasswordVisibility,
+            icon: Icon(isPasswordVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20, color: bodyColor.withOpacity(0.6),))),
+
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(onPressed: () {}, child: Text("Forgot Password?",
+            style: TextStyle(
+              color: AppColor.primary,
+              fontWeight: FontWeight.w700
+            ),)),
+        )
+
       ],
     );
   }
@@ -163,7 +181,7 @@ class _LoginForms extends StatelessWidget {
   Widget _label(String text) => Padding(
     padding: const EdgeInsetsGeometry.only(bottom: 10, left: 4),
     child: Text(text, style: TextStyle(
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: FontWeight.w700,
         color: bodyColor.withOpacity(0.8),
         letterSpacing: 1.2,
@@ -202,19 +220,6 @@ class _LoginForms extends StatelessWidget {
     );
   }
 }
-
-class _forgotPassword extends StatelessWidget {
-  final Color primaryColor;
-  const _forgotPassword({required this.primaryColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-
-    );
-  }
-}
-
 
 // Login Button
 class _LoginButton extends StatelessWidget {
@@ -307,7 +312,9 @@ class _FooterSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text("Don't have an account?", style: TextStyle(color: bodyColor),),
-        TextButton(onPressed: () {}, child: Text
+        TextButton(onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.register);
+        }, child: Text
           ("Create an Account", style: TextStyle(color: primaryColor, fontWeight: FontWeight.w800),))
       ],
     );
