@@ -128,7 +128,9 @@ class OnboardingScreen3 extends StatelessWidget {
                         ),
 
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.login);
+                          },
                           child: const Text(
                             "Next",
                             style: TextStyle(
