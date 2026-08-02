@@ -8,6 +8,7 @@ import '../features/onboarding/screen/onboarding3.dart';
 import '../features/home/screen/home_screen_costumer.dart';
 import '../features/home/screen/home_screen_booth.dart';
 import '../features/home/screen/home_screen_eo.dart';
+import '../features/event/screen/event_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -20,6 +21,7 @@ class AppRoutes {
   static const homecostumer = "/home_costumer";
   static const homebooth = "/home_booth";
   static const homeeo = "/home_eo";
+  static const event = "/event";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -66,6 +68,11 @@ class AppRoutes {
       case homeeo:
         return MaterialPageRoute(
           builder: (_) => HomeScreenEo(),
+        );
+
+      case event:
+        return MaterialPageRoute(
+          builder: (_) => EventScreen(),
         );
 
       default:
