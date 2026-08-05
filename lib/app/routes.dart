@@ -9,6 +9,13 @@ import '../features/home/screen/home_screen_costumer.dart';
 import '../features/home/screen/home_screen_booth.dart';
 import '../features/home/screen/home_screen_eo.dart';
 import '../features/event/screen/event_screen.dart';
+import '../features/event/screen/event_page.dart';
+import '../features/social/screen/friends_page.dart';
+import '../features/booth/screen/booth_page.dart';
+import '../features/booth/screen/booth_detail.dart';
+import '../features/profile/screen/profile_screen.dart';
+import '../features/booth/screen/my_booth_page.dart';
+
 
 class AppRoutes {
   AppRoutes._();
@@ -22,6 +29,13 @@ class AppRoutes {
   static const homebooth = "/home_booth";
   static const homeeo = "/home_eo";
   static const event = "/event";
+  static const eventpage = "/eventpage";
+  static const friendspage = "/friendspage";
+  static const boothpage = "/boothpage";
+  static const boothdetail = "/boothdetail";
+  static const profilecostumer = "/profilecostumer";
+  static const mybooth = "/mybooth";
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -73,6 +87,36 @@ class AppRoutes {
       case event:
         return MaterialPageRoute(
           builder: (_) => EventScreen(),
+        );
+
+      case eventpage:
+        return MaterialPageRoute(
+          builder: (_) => EventPage(),
+        );
+
+      case friendspage:
+        return MaterialPageRoute(
+          builder: (_) => FriendsChatPage(),
+        );
+
+      case boothpage:
+        return MaterialPageRoute(
+          builder: (_) => BoothPage(),
+        );
+
+      case boothdetail:
+        return MaterialPageRoute(
+          builder: (_) => BoothDetailPage(),
+        );
+
+      case profilecostumer:
+        return MaterialPageRoute(
+          builder: (_) => ProfilePage(),
+        );
+
+      case mybooth:
+        return MaterialPageRoute(
+          builder: (_) => MyBoothPage(),
         );
 
       default:
