@@ -1,6 +1,7 @@
 import 'package:eventra/core/theme/app_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../shared/widgets/custom_button.dart';
 import '../../../shared/widgets/custom_text_field.dart';
@@ -8,6 +9,7 @@ import '../../../shared/widgets/custom_app_bar.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/constant/app_strings.dart';
 import '../../../app/routes.dart';
+import '../../../core/services/auth_services.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +22,62 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _IsLoading = false;
   bool _IsPasswordVisible = false;
   bool _IsConfirmPasswordVisible = false;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _login() async {
+    try {
+      setState(() {
+        _IsLoading = true;
+      });
+
+      await _authService.login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Login berhasil"),
+        ),
+      );
+
+      Navigator.pushReplacementNamed(context, AppRoutes.onboarding1,);
+
+    } on AuthException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _IsLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               darkColor: AppColor.black,
                               bodyColor: AppColor.black,
                               borderColor: AppColor.border,
+
+                              emailController: _emailController,
+                              passwordController: _passwordController,
+
                               isPasswordVisible: _IsPasswordVisible,
                               onTogglePasswordVisibility: () {
                                 setState(() {
@@ -58,10 +120,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
 
                             const SizedBox(height: 5,),
-                            _LoginButton(btnColor: AppColor.black),
+                            _LoginButton(btnColor: AppColor.black, isLoading: _IsLoading, onPressed: _login,),
 
                             const SizedBox(height: 15,),
-                            _SocialLogin(bodyColor: AppColor.black, darkColor: AppColor.black, borderColor: AppColor.border),
+                            _SocialLogin(bodyColor: AppColor.black, darkColor: AppColor.black, borderColor: AppColor.border, onGooglePressed: () async {
+                              try {
+                              await _authService.signInWithGoogle();
+                            } catch (e) {
+                              if (!mounted) return;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                             _FooterSection(primaryColor: AppColor.primary, bodyColor: AppColor.black)
                             
                           ],
@@ -140,6 +215,9 @@ class _LoginForms extends StatelessWidget {
   final bool isPasswordVisible;
   final VoidCallback onTogglePasswordVisibility;
 
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+
   const _LoginForms({
     super.key,
     required this.primaryColor,
@@ -148,6 +226,9 @@ class _LoginForms extends StatelessWidget {
     required this.borderColor,
     required this.isPasswordVisible,
     required this.onTogglePasswordVisibility,
+
+    required this.emailController,
+    required this.passwordController,
   });
 
   @override
@@ -156,12 +237,14 @@ class _LoginForms extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _label("Email Address"),
-        _inputField(Icons.mail_outline_rounded, "Enter your email"),
+       _inputField(
+    Icons.mail_outline_rounded, "Enter your email", controller: emailController,),
 
         const SizedBox(height: 24,),
 
         _label("Password"),
-        _inputField(Icons.lock_open_rounded, "Enter your password", isPassword: true, suffix: IconButton(
+        _inputField(
+    Icons.lock_open_rounded, "Enter your password", controller: passwordController, isPassword: true, suffix: IconButton(
             onPressed: onTogglePasswordVisibility,
             icon: Icon(isPasswordVisible ? Icons.visibility_rounded : Icons.visibility_off_rounded, size: 20, color: bodyColor.withOpacity(0.6),))),
 
@@ -189,7 +272,7 @@ class _LoginForms extends StatelessWidget {
     ),
   );
 
-  Widget _inputField(IconData icon, String hint, {bool isPassword = false, Widget? suffix}) {
+  Widget _inputField(IconData icon, String hint, {required TextEditingController controller, bool isPassword = false, Widget? suffix,}) {
     return Container(
 
       decoration: BoxDecoration(
@@ -203,6 +286,7 @@ class _LoginForms extends StatelessWidget {
       ),
 
       child: TextField(
+        controller: controller,
         obscureText: isPassword && !isPasswordVisible,
         style: TextStyle(
           color: darkColor,
@@ -224,7 +308,15 @@ class _LoginForms extends StatelessWidget {
 // Login Button
 class _LoginButton extends StatelessWidget {
   final Color btnColor;
-  const _LoginButton({required this.btnColor});
+  final VoidCallback onPressed;
+  final bool isLoading;
+
+  const _LoginButton({
+    super.key,
+    required this.btnColor,
+    required this.onPressed,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -239,8 +331,23 @@ class _LoginButton extends StatelessWidget {
           ),
           elevation: 0
         ),
-        onPressed: () {},
-        child: const Text("Sign In", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),)
+        onPressed: onPressed,
+        child: isLoading
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: Colors.white,
+            ),
+          )
+        : const Text(
+            "Sign In",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
       ),
     );
   }
@@ -248,7 +355,8 @@ class _LoginButton extends StatelessWidget {
 
 class _SocialLogin extends StatelessWidget {
   final Color bodyColor, darkColor, borderColor;
-  const _SocialLogin({required this.bodyColor, required this.darkColor, required this.borderColor});
+  final VoidCallback onGooglePressed;
+  const _SocialLogin({required this.bodyColor, required this.darkColor, required this.borderColor, required this.onGooglePressed,});
 
   @override
   Widget build(BuildContext context) {
@@ -262,7 +370,19 @@ class _SocialLogin extends StatelessWidget {
         const SizedBox(height: 16,),
         Row(
           children: [
-            _tile("Google", null, icon: FaIcon(FontAwesomeIcons.google, size: 18,)),
+            Expanded(
+              child: GestureDetector(
+                onTap: onGooglePressed,
+                child: _tile(
+                  "Google",
+                  null,
+                  icon: const FaIcon(
+                    FontAwesomeIcons.google,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(width: 16,),
             _tile("Apple", null, icon: Icon(Icons.apple))
           ],

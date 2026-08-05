@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../core/theme/app_color.dart';
 import '../../../shared/widgets/navbar_costumer.dart';
 import '../../../shared/widgets/category.dart';
