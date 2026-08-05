@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_color.dart';
+import '../../../../core/theme/app_color.dart';
 
 class AttendeesSection extends StatelessWidget {
   final int totalMembers;

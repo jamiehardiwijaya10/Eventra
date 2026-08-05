@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../widgets/attendees_section.dart';
-import '../widgets/bottom_action.dart';
-import '../widgets/description.dart';
-import '../widgets/event_detail.dart';
-import '../widgets/event_header.dart';
-import '../widgets/event_title_card.dart';
-import '../widgets/event_top_bar.dart';
-import '../widgets/organizer_card.dart';
+import '../widgets/detail/attendees_section.dart';
+import '../widgets/detail/bottom_action.dart';
+import '../widgets/detail/description.dart';
+import '../widgets/detail/event_detail.dart';
+import '../widgets/detail/event_header.dart';
+import '../widgets/detail/event_title_card.dart';
+import '../widgets/detail/event_top_bar.dart';
+import '../widgets/detail/organizer_card.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
