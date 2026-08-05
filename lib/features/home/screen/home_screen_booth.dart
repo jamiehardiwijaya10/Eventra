@@ -5,6 +5,7 @@ import '../../../shared/widgets/navbar_booth.dart';
 import '../../../shared/widgets/category.dart';
 import '../widgets/event_card.dart';
 import '../widgets/event_card2.dart';
+import 'package:eventra/features/booth/screen/register_event_page.dart';
 
 class HomeScreenBooth extends StatefulWidget {
   const HomeScreenBooth({super.key});
@@ -304,6 +305,12 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
           backgroundColor: AppColor.primary,
           shape: const CircleBorder(),
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const RegisterEventPage(),
+              ),
+            );
           },
           child: const Icon(
             Icons.add,
