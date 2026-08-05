@@ -1,3 +1,4 @@
+import 'package:eventra/features/ticket/screen/ticket_screen.dart';
 import 'package:flutter/material.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_screen.dart';
@@ -9,6 +10,7 @@ import '../features/home/screen/home_screen_costumer.dart';
 import '../features/home/screen/home_screen_booth.dart';
 import '../features/home/screen/home_screen_eo.dart';
 import '../features/event/screen/event_screen.dart';
+import '../features/maps/screen/maps_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -22,6 +24,8 @@ class AppRoutes {
   static const homebooth = "/home_booth";
   static const homeeo = "/home_eo";
   static const event = "/event";
+  static const ticket = "/ticketsc";
+  static const maps = "/maps_screen";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -73,6 +77,16 @@ class AppRoutes {
       case event:
         return MaterialPageRoute(
           builder: (_) => EventScreen(),
+        );
+
+      case ticket:
+        return MaterialPageRoute(
+          builder: (_) => TicketScreen(),
+        );
+
+      case maps:
+        return MaterialPageRoute(
+          builder: (_) => MapScreen(),
         );
 
       default:

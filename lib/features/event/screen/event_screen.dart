@@ -7,6 +7,7 @@ import '../widgets/event_header.dart';
 import '../widgets/event_title_card.dart';
 import '../widgets/event_top_bar.dart';
 import '../widgets/organizer_card.dart';
+import '../../../app/routes.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -31,7 +32,9 @@ class _EventScreenState extends State<EventScreen> {
             bookmarked = !bookmarked;
           });
         },
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.ticket);
+        },
       ),
 
       body: Stack(
@@ -124,7 +127,9 @@ class _EventScreenState extends State<EventScreen> {
                         EventMenu(
                           title: "Location",
                           icon: Icons.location_on_outlined,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRoutes.maps);
+                          },
                         ),
 
                         EventMenu(
@@ -149,7 +154,9 @@ class _EventScreenState extends State<EventScreen> {
                           title: "Tickets",
                           icon:
                           Icons.confirmation_number_outlined,
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.pushNamed(context, AppRoutes.ticket);
+                          },
                         ),
 
                         EventMenu(
