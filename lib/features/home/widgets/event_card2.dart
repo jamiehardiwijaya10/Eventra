@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/routes.dart';
 
 class EventListCard extends StatelessWidget {
   final String image;
@@ -22,10 +23,7 @@ class EventListCard extends StatelessWidget {
     return Container(
       height: 90,
       margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 8,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -41,12 +39,7 @@ class EventListCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              image,
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-            ),
+            child: Image.asset(image, width: 70, height: 70, fit: BoxFit.cover),
           ),
 
           const SizedBox(width: 12),
@@ -114,11 +107,7 @@ class EventListCard extends StatelessWidget {
 
           const SizedBox(width: 10),
 
-          Container(
-            width: 1,
-            height: 55,
-            color: Colors.grey.shade300,
-          ),
+          Container(width: 1, height: 55, color: Colors.grey.shade300),
 
           const SizedBox(width: 10),
 
@@ -140,7 +129,9 @@ class EventListCard extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.event);
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,

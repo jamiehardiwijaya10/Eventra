@@ -7,6 +7,7 @@ import '../widgets/detail/event_header.dart';
 import '../widgets/detail/event_title_card.dart';
 import '../widgets/detail/event_top_bar.dart';
 import '../widgets/detail/organizer_card.dart';
+import '../../../app/routes.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -26,21 +27,16 @@ class _EventScreenState extends State<EventScreen> {
       bottomNavigationBar: EventActionBar(
         bookmarked: bookmarked,
         buttonText: "BUY TICKET",
-        onBookmark: () {
-          setState(() {
-            bookmarked = !bookmarked;
-          });
+        onBookmark: () {setState(() {bookmarked = !bookmarked;});},
+        onPressed: () {
+          Navigator.pushNamed(context, AppRoutes.eventpage);
         },
-        onPressed: () {},
       ),
 
       body: Stack(
         children: [
-
           const Positioned.fill(
-            child: EventHeaderImage(
-              image: "assets/images/konser.png",
-            ),
+            child: EventHeaderImage(image: "assets/images/konser.png"),
           ),
           DraggableScrollableSheet(
             initialChildSize: 0.65,
@@ -51,30 +47,21 @@ class _EventScreenState extends State<EventScreen> {
               return Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(35),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(35)),
                 ),
 
                 child: ListView(
                   controller: scrollController,
-                  padding: const EdgeInsets.fromLTRB(
-                    24,
-                    12,
-                    24,
-                    20,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
 
                   children: [
-
                     Center(
                       child: Container(
                         width: 45,
                         height: 5,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade300,
-                          borderRadius:
-                          BorderRadius.circular(50),
+                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                     ),
@@ -108,19 +95,17 @@ class _EventScreenState extends State<EventScreen> {
                     const SizedBox(height: 25),
 
                     OrganizerCard(
-                      image:
-                      "assets/images/Remielle Dan.jpg",
+                      image: "assets/images/Remielle Dan.jpg",
                       name: "Remielle",
                       role: "Event Organizer",
                       onChat: () {},
                       onCall: () {},
                     ),
 
-                    const SizedBox(height:25),
+                    const SizedBox(height: 25),
 
                     EventMenuSection(
                       menus: [
-
                         EventMenu(
                           title: "Location",
                           icon: Icons.location_on_outlined,
@@ -147,8 +132,7 @@ class _EventScreenState extends State<EventScreen> {
 
                         EventMenu(
                           title: "Tickets",
-                          icon:
-                          Icons.confirmation_number_outlined,
+                          icon: Icons.confirmation_number_outlined,
                           onTap: () {},
                         ),
 
@@ -164,18 +148,14 @@ class _EventScreenState extends State<EventScreen> {
 
                     const DescriptionSection(
                       description:
-                      "Fleet Snowfluff's Concert merupakan salah satu festival musik terbesar yang menghadirkan berbagai artis terkenal, area kuliner, booth UMKM, merchandise resmi, dan berbagai aktivitas menarik lainnya.",
+                          "Fleet Snowfluff's Concert merupakan salah satu festival musik terbesar yang menghadirkan berbagai artis terkenal, area kuliner, booth UMKM, merchandise resmi, dan berbagai aktivitas menarik lainnya.",
                     ),
-
                   ],
                 ),
               );
             },
           ),
-          EventTopBar(
-            onBack: () => Navigator.pop(context),
-            onFavorite: () {},
-          ),
+          EventTopBar(onBack: () => Navigator.pop(context), onFavorite: () {}),
         ],
       ),
     );

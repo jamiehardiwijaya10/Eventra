@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../app/routes.dart';
 
 class AuthService {
   final SupabaseClient _client = Supabase.instance.client;
@@ -94,6 +95,54 @@ Future<void> createProfile({
     });
 
     debugPrint("PROFILE GOOGLE BERHASIL DIBUAT");
+  }
+
+  Future<String> getUserRole() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    final profile = await _client
+        .from('profiles')
+        .select('roles(name)')
+        .eq('id', user.id)
+        .single();
+
+    return profile['roles']['name'] as String;
+  }
+
+  Future<void> goToHomeByRole(BuildContext context) async {
+    final role = await getUserRole();
+
+    if (!context.mounted) return;
+
+    switch (role) {
+      case "User":
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.homecostumer,
+        );
+        break;
+
+      case "Booth Owner":
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.homebooth,
+        );
+        break;
+
+      case "EO":
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.homeeo,
+        );
+        break;
+
+      default:
+        throw Exception("Role tidak dikenali");
+    }
   }
 
   User? get currentUser => _client.auth.currentUser;
