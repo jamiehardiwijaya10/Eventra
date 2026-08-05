@@ -28,6 +28,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  supabase_flutter: ^2.16.0
   flutter:
     sdk: flutter
 
@@ -36,6 +37,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   font_awesome_flutter: ^11.0.0
   google_fonts: ^8.2.0
+  flutter_dotenv: ^6.0.1
+  google_sign_in: ^7.2.0
   image_picker: ^1.1.2
 
 dev_dependencies:
@@ -56,6 +59,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/images/
+    - .env
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
