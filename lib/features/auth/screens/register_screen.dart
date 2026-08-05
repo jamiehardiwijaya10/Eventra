@@ -4,6 +4,7 @@ import '../../../core/theme/app_color.dart';
 import '../../../core/theme/app_text_style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../core/services/auth_services.dart';
+import '../../../app/routes.dart';
 
 enum UserRole {
   customer("User"),
@@ -41,72 +42,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _register() async {
-  if (_passwordController.text !=
-      _confirmPasswordController.text) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Passwords do not match"),
-      ),
-    );
-    return;
-  }
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Passwords do not match")));
+      return;
+    }
 
-  try {
-    await _authService.register(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      roleName: _selectedRole.dbName,
-    );
+    try {
+      await _authService.register(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        roleName: _selectedRole.dbName,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Register Success!"),
-      ),
-    );
-  } on AuthException catch (e) {
-    if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Register Success!")));
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.message),
-      ),
-    );
-  } on PostgrestException catch (e) {
-    if (!mounted) return;
+      Navigator.pushReplacementNamed(context, AppRoutes.onboarding1);
+    } on AuthException catch (e) {
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'PostgREST Error\n'
-          'Message: ${e.message}\n'
-          'Code: ${e.code}\n'
-          'Details: ${e.details}',
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.message)));
+    } on PostgrestException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'PostgREST Error\n'
+            'Message: ${e.message}\n'
+            'Code: ${e.code}\n'
+            'Details: ${e.details}',
+          ),
+          duration: const Duration(seconds: 10),
         ),
-        duration: const Duration(seconds: 10),
-      ),
-    );
+      );
 
-    debugPrint('=== POSTGREST ERROR ===');
-    debugPrint('MESSAGE: ${e.message}');
-    debugPrint('CODE: ${e.code}');
-    debugPrint('DETAILS: ${e.details}');
-    debugPrint('HINT: ${e.hint}');
-  } catch (e) {
-    if (!mounted) return;
+      debugPrint('=== POSTGREST ERROR ===');
+      debugPrint('MESSAGE: ${e.message}');
+      debugPrint('CODE: ${e.code}');
+      debugPrint('DETAILS: ${e.details}');
+      debugPrint('HINT: ${e.hint}');
+    } catch (e) {
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString()),
-        duration: const Duration(seconds: 8),
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          duration: const Duration(seconds: 8),
+        ),
+      );
 
-    debugPrint('=== REGISTER ERROR ===');
-    debugPrint(e.toString());
+      debugPrint('=== REGISTER ERROR ===');
+      debugPrint(e.toString());
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -513,25 +509,23 @@ class _SocialLogin extends StatelessWidget {
             _tile(
               "Google",
               null,
-              icon: const FaIcon(
-                FontAwesomeIcons.google,
-                size: 18,
-              ),
+              icon: const FaIcon(FontAwesomeIcons.google, size: 18),
               onTap: onGooglePressed,
             ),
             const SizedBox(width: 16),
-            _tile(
-              "Apple",
-              null,
-              icon: const Icon(Icons.apple),
-            ),
+            _tile("Apple", null, icon: const Icon(Icons.apple)),
           ],
         ),
       ],
     );
   }
 
-  Widget _tile(String label,String? imgUrl, {Widget? icon,VoidCallback? onTap,}) {
+  Widget _tile(
+    String label,
+    String? imgUrl, {
+    Widget? icon,
+    VoidCallback? onTap,
+  }) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_color.dart';
+import '../../app/routes.dart';
 
 class NavBar extends StatelessWidget {
   final int currentIndex;
@@ -29,6 +30,45 @@ class NavBar extends StatelessWidget {
         type: BottomNavigationBarType.fixed,
 
         currentIndex: currentIndex,
+        onTap: (index) {
+          switch (index) {
+            case 0:
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.homecostumer,
+              );
+              break;
+
+            case 1:
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.event,
+              );
+              break;
+
+            case 2:
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.friendspage,
+              );
+              break;
+
+            case 3:
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.boothpage,
+              );
+              break;
+
+            case 4:
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.profilecostumer,
+              );
+              break;
+          }
+        },
+
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),

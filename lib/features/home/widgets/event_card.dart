@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_color.dart';
+import '../../../app/routes.dart';
 
 class FeaturedEventCard extends StatelessWidget {
   final String image;
@@ -26,11 +27,7 @@ class FeaturedEventCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
+          BoxShadow(color: Colors.black12, blurRadius: 5, offset: Offset(0, 2)),
         ],
       ),
 
@@ -39,14 +36,9 @@ class FeaturedEventCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: Image.asset(
-                image,
-                height: 185,
-                fit: BoxFit.cover,
-              ),
+              child: Image.asset(image, height: 185, fit: BoxFit.cover),
             ),
 
             const SizedBox(height: 20),
@@ -71,10 +63,7 @@ class FeaturedEventCard extends StatelessWidget {
 
                 const SizedBox(width: 8),
 
-                Text(
-                  date,
-                  style: GoogleFonts.poppins(fontSize: 12),
-                ),
+                Text(date, style: GoogleFonts.poppins(fontSize: 12)),
               ],
             ),
 
@@ -104,35 +93,32 @@ class FeaturedEventCard extends StatelessWidget {
 
             Row(
               children: [
-
-                Image.asset(
-                  "assets/images/Member A.png",
-                  fit: BoxFit.contain,
-                ),
+                Image.asset("assets/images/Member A.png", fit: BoxFit.contain),
 
                 const SizedBox(width: 5),
 
                 Text(
-                    "Members Joined",
-                    style: GoogleFonts.poppins(fontSize: 10),
+                  "Members Joined",
+                  style: GoogleFonts.poppins(fontSize: 10),
                 ),
 
                 const SizedBox(width: 8),
 
                 TextButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
+                  onPressed: () {
+                    Navigator.pushNamed(context, AppRoutes.event);
+                  },
+                  style: TextButton.styleFrom(
                     backgroundColor: Colors.black87,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-
                   child: const Text("JOIN NOW"),
-                )
+                ),
               ],
-            )
+            ),
           ],
         ),
       ),
