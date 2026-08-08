@@ -15,7 +15,8 @@ import '../features/booth/screen/booth_page.dart';
 import '../features/booth/screen/booth_detail.dart';
 import '../features/profile/screen/profile_screen.dart';
 import '../features/booth/screen/my_booth_page.dart';
-
+import '../features/event/screen/my_event_page.dart';
+import '../features/event/screen/event_statistics.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -35,6 +36,8 @@ class AppRoutes {
   static const boothdetail = "/boothdetail";
   static const profilecostumer = "/profilecostumer";
   static const mybooth = "/mybooth";
+  static const myevent = "/myevent";
+  static const statsevent = "/statsevent";
 
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -117,6 +120,16 @@ class AppRoutes {
       case mybooth:
         return MaterialPageRoute(
           builder: (_) => MyBoothPage(),
+        );
+
+      case myevent:
+        return MaterialPageRoute(
+          builder: (_) => MyEventPage(),
+        );
+
+      case statsevent:
+        return MaterialPageRoute(
+          builder: (_) => StatisticsPage(),
         );
 
       default:
