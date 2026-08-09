@@ -1,4 +1,5 @@
 import 'package:eventra/features/maps/providers/map_controller_provider.dart';
+import 'package:eventra/features/maps/providers/route_provider.dart';
 import 'package:eventra/features/maps/providers/search_providers.dart';
 import 'package:eventra/features/maps/search/models/place_models.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,7 @@ class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
     setState(() => _showSuggestions = false);
 
     ref.read(selectedPlaceProvider.notifier).state = place;
+    ref.read(routeProvider.notifier).fetchRoute();
 
     final mapController = ref.read(mapControllerProvider);
     mapController.moveSmooth(place.latLng, zoom: 14);
@@ -56,7 +58,7 @@ class _SearchBarWidgetState extends ConsumerState<SearchBarWidget> {
     _controller.clear();
     ref.read(searchQueryProvider.notifier).state = '';
     ref.read(selectedPlaceProvider.notifier).state = null;
-    // ref.read(routeProvider.notifier).clearState();
+    ref.read(routeProvider.notifier).clearRoute();
     setState(() => _showSuggestions = false);
   }
 

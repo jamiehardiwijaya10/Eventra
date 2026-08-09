@@ -1,5 +1,8 @@
+import 'package:eventra/features/maps/navigation/models/route_state.dart';
 import 'package:eventra/features/maps/providers/location_providers.dart';
 import 'package:eventra/features/maps/providers/map_controller_provider.dart';
+import 'package:eventra/features/maps/providers/route_provider.dart';
+import 'package:eventra/features/maps/providers/search_providers.dart';
 import 'package:eventra/features/maps/widgets/custom_marker.dart';
 import 'package:eventra/features/maps/widgets/map_controls.dart';
 import 'package:eventra/features/maps/widgets/search_bar_widget.dart';
@@ -31,12 +34,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
         .moveSmooth(pos, zoom: AppConstants.defaultZoom);
     }
   }
+
+  void _handleNavigatingCamera(RouteState route) {
+    if (!_mapReady) return;
+    if (route.status == NavigationStatus.navigating && route.animatedMarkerPos != null) {
+      ref
+        .read(mapControllerProvider)
+        .moveSmooth(route.animatedMarkerPos!, zoom: AppConstants.defaultZoom);
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
     final location = ref.watch(locationProvider);
     final isSatellite = ref.watch(isSatelliteProvider);
     final mapController = ref.watch(mapControllerProvider);
+    final destination = ref.watch(selectedPlaceProvider);
+    final route = ref.watch(routeProvider);
 
     ref.listen(locationProvider, (prev, next){
       if (!_mapReady) return;
@@ -47,6 +61,8 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           .moveSmooth(next.position!, zoom: AppConstants.defaultZoom);
       }
     });
+
+    ref.listen(routeProvider, (_, next) => _handleNavigatingCamera(next));
 
     return Scaffold(
       body: Stack(
@@ -69,6 +85,35 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                 userAgentPackageName: 'com.example.osm_flutter.app',
                 maxZoom: 19,
               ),
+              
+              if (route.routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: route.routePoints,
+                      strokeWidth: 8,
+                      color: Colors.black.withAlpha(20),
+                    ),
+
+                    Polyline(
+                      points: route.routePoints,
+                      strokeWidth: 5,
+                      color: const Color(0xFF1565C0),
+                      strokeCap: StrokeCap.round,
+                      strokeJoin: StrokeJoin.round,
+                    ),
+
+                    if (route.status == NavigationStatus.navigating && route.currentSegmentIndex > 0)
+                      Polyline(
+                        points: route.routePoints
+                          .take(route.currentSegmentIndex)
+                          .toList(),
+                        strokeWidth: 5,
+                        color: Colors.green,
+                        strokeCap: StrokeCap.round,
+                      ),
+                  ],
+                ),
 
               MarkerLayer(
                 markers: [
@@ -80,13 +125,23 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       child: UserLocationMarker(heading: location.heading ?? 0,),
                     ),
                     
-                  if (location.position != null)
+                  if (destination != null && route.status != NavigationStatus.navigating)
                     Marker(
-                      point: LatLng(-6.901380528085498, 107.6197135848428),
-                      width: 80,
-                      height: 80,
-                      child: const ColoredBox(color: Colors.red, child: SizedBox(width: 50, height: 50,),) 
-                    )
+                      point: destination.latLng,
+                      width: 50,
+                      height: 70,
+                      child: const DestinationMarker(),
+                    ),
+
+                  if (route.animatedMarkerPos != null && route.status == NavigationStatus.navigating)
+                    Marker(
+                      point: route.animatedMarkerPos!,
+                      width: 44,
+                      height: 44,
+                      child: NavigationMarker(
+                        bearing: route.animatedMarkerBearing ?? 0,
+                      ),
+                    ),
                 ],
               ),
             ],
