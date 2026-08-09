@@ -10,13 +10,20 @@ class EventHeaderImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * .45,
-      width: double.infinity,
-      child: Image.asset(
-        image,
-        fit: BoxFit.cover,
-      ),
+    return Image.network(
+      image,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) {
+        return Container(
+          color: Colors.grey.shade200,
+          child: const Center(
+            child: Icon(
+              Icons.broken_image,
+              size: 50,
+            ),
+          ),
+        );
+      },
     );
   }
 }

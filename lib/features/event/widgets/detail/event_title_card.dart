@@ -6,6 +6,7 @@ class EventTitleCard extends StatelessWidget {
   final String title;
   final String location;
   final String date;
+  final String endDate;
   final String price;
 
   final double rating;
@@ -17,6 +18,7 @@ class EventTitleCard extends StatelessWidget {
     required this.title,
     required this.location,
     required this.date,
+    required this.endDate,
     required this.price,
     required this.rating,
     required this.joined,
@@ -105,7 +107,6 @@ class EventTitleCard extends StatelessWidget {
 
           Row(
             children: [
-
               const Icon(
                 Icons.calendar_today_outlined,
                 size: 18,
@@ -114,10 +115,13 @@ class EventTitleCard extends StatelessWidget {
 
               const SizedBox(width: 6),
 
-              Text(
-                date,
-                style: GoogleFonts.poppins(
-                  color: Colors.grey.shade700,
+              Expanded(
+                child: Text(
+                  "$date - $endDate",
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
             ],

@@ -50,10 +50,32 @@ class EventCard extends StatelessWidget {
           SizedBox(
             height: 170,
             width: double.infinity,
-            child: Image.asset(
-              image,
-              fit: BoxFit.cover,
-            ),
+            child: image.isEmpty
+                ? Container(
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_not_supported_outlined,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
+                  )
+                : Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint("EVENT IMAGE ERROR: $error");
+
+                      return Container(
+                        color: Colors.grey.shade200,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          size: 40,
+                          color: Colors.grey,
+                        ),
+                      );
+                    },
+                  ),
           ),
 
           Padding(

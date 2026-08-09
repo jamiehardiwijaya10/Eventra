@@ -3,19 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../app/routes.dart';
 
 class EventListCard extends StatelessWidget {
+  final String eventId;
   final String image;
   final String title;
-  final String date;
+  final String startDate;
+  final String endDate;
   final String location;
-  final String price;
 
   const EventListCard({
     super.key,
+    required this.eventId,
     required this.image,
     required this.title,
-    required this.date,
+    required this.startDate,
+    required this.endDate,
     required this.location,
-    required this.price,
   });
 
   @override
@@ -23,7 +25,10 @@ class EventListCard extends StatelessWidget {
     return Container(
       height: 90,
       margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 8,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -39,7 +44,29 @@ class EventListCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(image, width: 70, height: 70, fit: BoxFit.cover),
+            child: SizedBox(
+              width: 70,
+              height: 70,
+              child: image.isEmpty
+                  ? Container(
+                      color: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                      ),
+                    )
+                  : Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.image_not_supported,
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ),
 
           const SizedBox(width: 12),
@@ -71,12 +98,14 @@ class EventListCard extends StatelessWidget {
 
                     const SizedBox(width: 4),
 
-                    Text(
-                      date,
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
+                    Expanded(
+                      child: Text(
+                    "$startDate - $endDate",
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                    ),
+                  ),
                     ),
 
                     const SizedBox(width: 8),
@@ -107,7 +136,11 @@ class EventListCard extends StatelessWidget {
 
           const SizedBox(width: 10),
 
-          Container(width: 1, height: 55, color: Colors.grey.shade300),
+          Container(
+            width: 1,
+            height: 55,
+            color: Colors.grey.shade300,
+          ),
 
           const SizedBox(width: 10),
 
@@ -117,7 +150,7 @@ class EventListCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  price,
+                  "Free",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
@@ -130,12 +163,17 @@ class EventListCard extends StatelessWidget {
 
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, AppRoutes.event);
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.event,
+                      arguments: eventId,
+                    );
                   },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    tapTargetSize:
+                        MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
                     "JOIN NOW",

@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'review_image_preview.dart';
 import 'review_section_card.dart';
@@ -22,9 +22,9 @@ class ReviewPublishStep extends StatelessWidget {
 
   final List<String> categories;
 
-  final File? banner;
-  final File? logo;
-  final File? floorplan;
+  final Uint8List? banner;
+  final Uint8List? logo;
+  final Uint8List? floorplan;
 
   final bool agree;
   final ValueChanged<bool?> onAgreeChanged;

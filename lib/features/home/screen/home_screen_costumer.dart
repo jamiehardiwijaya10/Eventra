@@ -5,6 +5,8 @@ import '../../../shared/widgets/navbar_costumer.dart';
 import '../../../shared/widgets/category.dart';
 import '../widgets/event_card.dart';
 import '../widgets/event_card2.dart';
+import '../../../core/services/event_service.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreenCostumer extends StatefulWidget {
   const HomeScreenCostumer({super.key});
@@ -16,11 +18,103 @@ class HomeScreenCostumer extends StatefulWidget {
 class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
   int selectedCategory = 0;
 
+  String _formatDate(String? date) {
+    if (date == null || date.isEmpty) {
+      return '-';
+    }
+
+    try {
+      final parsedDate = DateTime.parse(date);
+      return DateFormat('dd MMMM yyyy').format(parsedDate);
+    } catch (e) {
+      return date;
+    }
+  }
+
+  // String _formatDateRange(dynamic startValue, dynamic endValue) {
+  //   if (startValue == null || startValue.toString().isEmpty) {
+  //     return '';
+  //   }
+
+  //   final start = DateTime.tryParse(startValue.toString());
+
+  //   if (start == null) {
+  //     return startValue.toString();
+  //   }
+
+  //   final end = endValue != null && endValue.toString().isNotEmpty
+  //       ? DateTime.tryParse(endValue.toString())
+  //       : null;
+
+  //   const months = [
+  //     'January',
+  //     'February',
+  //     'March',
+  //     'April',
+  //     'May',
+  //     'June',
+  //     'July',
+  //     'August',
+  //     'September',
+  //     'October',
+  //     'November',
+  //     'December',
+  //   ];
+
+  //   final startText = '${start.day} ${months[start.month - 1]} ${start.year}';
+
+  //   if (end == null) {
+  //     return startText;
+  //   }
+
+  //   final endText = '${end.day} ${months[end.month - 1]} ${end.year}';
+
+  //   if (start.year == end.year &&
+  //       start.month == end.month &&
+  //       start.day == end.day) {
+  //     return startText;
+  //   }
+
+  //   return '$startText - $endText';
+  // }
+
+  final EventService _eventService = EventService();
+  List<Map<String, dynamic>> _events = [];
+  bool _isLoadingEvents = true;
+  String? _eventError;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEvents();
+  }
+
+  Future<void> _loadEvents() async {
+    try {
+      final events = await _eventService.getEvents();
+
+      if (!mounted) return;
+
+      setState(() {
+        _events = events;
+        _isLoadingEvents = false;
+        _eventError = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingEvents = false;
+        _eventError = e.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child:SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Stack(
             children: [
               Positioned.fill(
@@ -33,21 +127,16 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              AppColor.primary,
-                              AppColor.secondary,
-                            ],
+                            colors: [AppColor.primary, AppColor.secondary],
                           ),
                         ),
                       ),
                     ),
                     Expanded(
                       flex: 2,
-                      child: Container(
-                        color: Colors.white.withOpacity(0.98),
-                      ),
+                      child: Container(color: Colors.white.withOpacity(0.98)),
                     ),
-                  ]
+                  ],
                 ),
               ),
 
@@ -81,15 +170,6 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                             ),
                           ],
                         ),
-
-                        Text(
-                          "Current Location\nBandung, IDN",
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
                       ],
                     ),
 
@@ -119,8 +199,7 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             "Popular Events 🔥",
@@ -137,9 +216,7 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                             onPressed: () {},
                             child: const Text(
                               "VIEW ALL",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
@@ -152,33 +229,45 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                         scrollDirection: Axis.horizontal,
                         physics: const BouncingScrollPhysics(),
                         clipBehavior: Clip.none,
-                        children: const [
-                          SizedBox(width: 10),
+                        children: [
+                          const SizedBox(width: 10),
 
-                          FeaturedEventCard(
-                            image: "assets/images/konser.png",
-                            title: "Fleet Snowfluff's Concert",
-                            date: "22 October 2026",
-                            location: "Startoch Academy, Lahai Roi",
-                          ),
-
-                          SizedBox(width: 15),
-
-                          FeaturedEventCard(
-                            image: "assets/images/konser.png",
-                            title: "Music Festival",
-                            date: "24 October 2026",
-                            location: "Ragunnna, Rinascita",
-                          ),
-
-                          SizedBox(width: 15),
-
-                          FeaturedEventCard(
-                            image: "assets/images/konser.png",
-                            title: "Summer Festival",
-                            date: "28 October 2026",
-                            location: "Mengzhou, Huanglong",
-                          ),
+                          if (_isLoadingEvents)
+                            const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                              ),
+                            )
+                          else if (_eventError != null)
+                            Text(
+                              "Gagal memuat event",
+                              style: GoogleFonts.poppins(color: Colors.white),
+                            )
+                          else if (_events.isEmpty)
+                            Text(
+                              "Belum ada event",
+                              style: GoogleFonts.poppins(color: Colors.white),
+                            )
+                          else
+                            ..._events.take(5).map((event) {
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 15),
+                                child: FeaturedEventCard(
+                                  eventId: event['id'].toString(),
+                                  image: event['banner']?.toString() ?? '',
+                                  title:
+                                      event['title']?.toString() ??
+                                      'Untitled Event',
+                                  startDate: _formatDate(
+                                    event['start_date']?.toString(),
+                                  ),
+                                  endDate: _formatDate(
+                                    event['end_date']?.toString(),
+                                  ),
+                                  location: event['location']?.toString() ?? '',
+                                ),
+                              );
+                            }),
 
                           SizedBox(width: 20),
                         ],
@@ -188,8 +277,7 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                     const SizedBox(height: 15),
 
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Choose by Category ✨",
@@ -203,9 +291,7 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
                           onPressed: () {},
                           child: const Text(
                             "VIEW ALL",
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ],
@@ -274,31 +360,31 @@ class _HomeScreenCostumerState extends State<HomeScreenCostumer> {
 
                     const SizedBox(height: 25),
 
-                    const EventListCard(
-                      image: "assets/images/konser.png",
-                      title: "Fleet Snowfluff's Concert",
-                      date: "22 October 2026",
-                      location: "Bandung",
-                      price: "\$10 USD",
-                    ),
-
-                    const EventListCard(
-                      image: "assets/images/konser.png",
-                      title: "Music Festival",
-                      date: "24 October 2026",
-                      location: "Jakarta",
-                      price: "Free",
-                    ),
-                  ]
+                    if (_isLoadingEvents)
+                      const Center(child: CircularProgressIndicator())
+                    else if (_events.isEmpty)
+                      const Text("Belum ada event")
+                    else
+                      ..._events.map((event) {
+                        return EventListCard(
+                          eventId: event['id'].toString(),
+                          image: event['banner']?.toString() ?? '',
+                          title: event['title']?.toString() ?? 'Untitled Event',
+                          startDate: _formatDate(
+                            event['start_date']?.toString(),
+                          ),
+                          endDate: _formatDate(event['end_date']?.toString()),
+                          location: event['location']?.toString() ?? '',
+                        );
+                      }),
+                  ],
                 ),
               ),
-            ]
+            ],
           ),
         ),
       ),
-      bottomNavigationBar: const NavBar(
-        currentIndex: 0,
-      ),
+      bottomNavigationBar: const NavBar(currentIndex: 0),
     );
   }
 }

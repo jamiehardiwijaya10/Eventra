@@ -88,8 +88,12 @@ class AppRoutes {
         );
 
       case event:
+        final eventId = settings.arguments as String;
+
         return MaterialPageRoute(
-          builder: (_) => EventScreen(),
+          builder: (_) => EventScreen(
+            eventId: eventId,
+          ),
         );
 
       case eventpage:

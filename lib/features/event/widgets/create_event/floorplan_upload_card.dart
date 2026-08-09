@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'dart:typed_data';
 
 class FloorplanUploadCard extends StatelessWidget {
-  final File? image;
+  final Uint8List? image;
   final VoidCallback onTap;
 
   const FloorplanUploadCard({
@@ -53,12 +52,12 @@ class FloorplanUploadCard extends StatelessWidget {
         )
             : ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Image.file(
+          child: Image.memory(
             image!,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
-          ),
+          )
         ),
       ),
     );

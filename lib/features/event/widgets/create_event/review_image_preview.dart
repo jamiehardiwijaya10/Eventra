@@ -1,11 +1,9 @@
-import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class ReviewImagePreview extends StatelessWidget {
-
   final String title;
-  final File? image;
+  final Uint8List? image;
 
   const ReviewImagePreview({
     super.key,
@@ -15,32 +13,45 @@ class ReviewImagePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-        SizedBox(
-          width: 110,
-          child: Text(title),
-        ),
-
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: image == null
-              ? Container(
-            width: 80,
-            height: 80,
-            color: Colors.grey.shade200,
-            child: const Icon(Icons.image),
-          )
-              : Image.file(
-            image!,
-            width: 80,
-            height: 80,
-            fit: BoxFit.cover,
+        Text(
+          title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
           ),
         ),
 
+        const SizedBox(height: 8),
+
+        Container(
+          width: double.infinity,
+          height: 180,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: Colors.grey.shade300,
+            ),
+          ),
+          child: image == null
+              ? const Center(
+                  child: Text(
+                    "No image",
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(14),
+                  child: Image.memory(
+                    image!,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+        ),
       ],
     );
   }

@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../core/services/event_service.dart';
 import '../widgets/create_event/event_information_step.dart';
 import '../widgets/create_event/venue_schedule_step.dart';
 import '../widgets/create_event/booth_configuration_step.dart';
@@ -9,6 +9,7 @@ import '../widgets/create_event/event_step_indicator.dart';
 import '../widgets/create_event/event_navigation.dart';
 import '../widgets/create_event/event_validators.dart';
 import 'event_success_page.dart';
+import 'dart:typed_data';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({
@@ -20,11 +21,10 @@ class CreateEventPage extends StatefulWidget {
       _CreateEventPageState();
 }
 
-class _CreateEventPageState
-    extends State<CreateEventPage> {
+class _CreateEventPageState extends State<CreateEventPage> {
+  final EventService _eventService = EventService();
 
   int currentStep = 0;
-
   bool isSubmitting = false;
   bool agree = false;
 
@@ -36,8 +36,9 @@ class _CreateEventPageState
 
   String? selectedCategory;
 
-  File? bannerImage;
-  File? logoImage;
+  Uint8List? bannerImage;
+  Uint8List? logoImage;
+  Uint8List? floorplanImage;
 
   bool isIndoor = false;
 
@@ -52,8 +53,6 @@ class _CreateEventPageState
 
   TimeOfDay? openingTime;
   TimeOfDay? closingTime;
-
-  File? floorplanImage;
 
   final maximumBoothController =
   TextEditingController();
@@ -87,8 +86,7 @@ class _CreateEventPageState
     super.dispose();
   }
 
-  Future<File?> pickImage() async {
-
+  Future<Uint8List?> pickImage() async {
     final result = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 85,
@@ -96,11 +94,10 @@ class _CreateEventPageState
 
     if (result == null) return null;
 
-    return File(result.path);
+    return await result.readAsBytes();
   }
 
-  Future<void> pickBanner() async {
-
+  Future pickBanner() async {
     final image = await pickImage();
 
     if (image == null) return;
@@ -110,8 +107,7 @@ class _CreateEventPageState
     });
   }
 
-  Future<void> pickLogo() async {
-
+  Future pickLogo() async {
     final image = await pickImage();
 
     if (image == null) return;
@@ -121,8 +117,7 @@ class _CreateEventPageState
     });
   }
 
-  Future<void> pickFloorplan() async {
-
+  Future pickFloorplan() async {
     final image = await pickImage();
 
     if (image == null) return;
@@ -536,9 +531,25 @@ class _CreateEventPageState
     nextStep();
   }
 
-  Future<void> publishEvent() async {
+  Future publishEvent() async {
     if (!agree) {
-      showValidationError("Please complete all required information.");
+      showValidationError(
+        "Please complete all required information.",
+      );
+      return;
+    }
+
+    if (startDate == null || endDate == null) {
+      showValidationError(
+        "Start date dan end date wajib diisi.",
+      );
+      return;
+    }
+
+    if (bannerImage == null) {
+      showValidationError(
+        "Banner event wajib dipilih.",
+      );
       return;
     }
 
@@ -546,20 +557,61 @@ class _CreateEventPageState
       isSubmitting = true;
     });
 
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
+    try {
+      final categoryId =
+          await _eventService.getCategoryIdByName(
+        selectedCategory!,
+      );
 
-    setState(() {
-      isSubmitting = false;
-    });
+      if (categoryId == null) {
+        throw Exception(
+          "Kategori '$selectedCategory' tidak ditemukan di database.",
+        );
+      }
 
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const EventSuccessPage(),
-      ),
-    );
+      final bannerUrl =
+          await _eventService.uploadEventBanner(
+        bytes: bannerImage!,
+        fileName:
+            'event-banner-${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+
+      debugPrint("BANNER URL: $bannerUrl");
+
+      await _eventService.createEvent(
+        title: eventNameController.text.trim(),
+        description: descriptionController.text.trim(),
+        banner: bannerUrl,
+        location: addressController.text.trim(),
+        startDate: startDate!,
+        endDate: endDate!,
+        categoryId: categoryId,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        isSubmitting = false;
+      });
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const EventSuccessPage(),
+        ),
+      );
+    } catch (e) {
+      debugPrint("CREATE EVENT ERROR: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        isSubmitting = false;
+      });
+
+      showValidationError(
+        "Gagal membuat event: $e",
+      );
+    }
   }
 }
