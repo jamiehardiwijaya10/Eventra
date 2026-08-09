@@ -24,6 +24,13 @@ class AppRoutes {
   static const homebooth = "/home_booth";
   static const homeeo = "/home_eo";
   static const event = "/event";
+  static const eventpage = "/eventpage";
+  static const friendspage = "/friendspage";
+  static const boothpage = "/boothpage";
+  static const boothdetail = "/boothdetail";
+  static const profilecostumer = "/profilecostumer";
+  static const mybooth = "/mybooth";
+
   static const ticket = "/ticketsc";
   static const maps = "/maps_screen";
 

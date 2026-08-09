@@ -2,6 +2,7 @@ import 'package:eventra/features/maps/providers/location_providers.dart';
 import 'package:eventra/features/maps/providers/map_controller_provider.dart';
 import 'package:eventra/features/maps/widgets/custom_marker.dart';
 import 'package:eventra/features/maps/widgets/map_controls.dart';
+import 'package:eventra/features/maps/widgets/search_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -87,11 +88,47 @@ class _MapScreenState extends ConsumerState<MapScreen> {
                       child: const ColoredBox(color: Colors.red, child: SizedBox(width: 50, height: 50,),) 
                     )
                 ],
-              )
+              ),
             ],
           ),
 
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 12,
+            left: 16,
+            right: 16,
+            child: const SearchBarWidget(),
+          ),
+
           Positioned(right: 16, bottom: 200, child: const MapControls(),),
+
+          if (location.error != null) 
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 80,
+              left: 16,
+              right: 16,
+              child: Material(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.red,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning_rounded, color: Colors.white,),
+                      const SizedBox(width: 8,),
+                      Expanded(
+                        child: Text(
+                          location.error!,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );

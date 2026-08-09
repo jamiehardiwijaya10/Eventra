@@ -1,7 +1,7 @@
 class AppConstants {
   static const String osrmBaseUrl = 'https://router.project-osrm.org/route/v1/driving';
 
-  static const String nominatingBaseUrl = 'https://nominatim.openstreetmap.org';
+  static const String nominatimBaseUrl = 'https://nominatim.openstreetmap.org';
 
   static const String osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
