@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EventListCard extends StatelessWidget {
+  final String eventId;
   final String image;
   final String title;
-  final String date;
+  final String startDate;
+  final String endDate;
   final String location;
-  final String price;
 
   const EventListCard({
     super.key,
+    required this.eventId,
     required this.image,
     required this.title,
-    required this.date,
+    required this.startDate,
+    required this.endDate,
     required this.location,
-    required this.price,
   });
 
   @override
@@ -41,12 +43,22 @@ class EventListCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              image,
-              width: 70,
-              height: 70,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(
+                    image,
+                    width: 70,
+                    height: 70,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 70,
+                        height: 70,
+                        color: Colors.grey.shade200,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                        ),
+                      );
+                    },
+                  ),
           ),
 
           const SizedBox(width: 12),
@@ -79,7 +91,8 @@ class EventListCard extends StatelessWidget {
                     const SizedBox(width: 4),
 
                     Text(
-                      date,
+                      "$startDate - $endDate",
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         color: Colors.grey,
@@ -128,7 +141,7 @@ class EventListCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  price,
+                  "EVENT",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 12,

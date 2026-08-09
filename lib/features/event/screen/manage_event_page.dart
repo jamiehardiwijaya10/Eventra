@@ -1,13 +1,96 @@
 import 'package:flutter/material.dart';
+import '../../../core/services/event_service.dart';
 import '../widgets/my/management_menu_card.dart';
 
-class ManageEventPage extends StatelessWidget {
+class ManageEventPage extends StatefulWidget {
+  final String eventId;
+
   const ManageEventPage({
     super.key,
+    required this.eventId,
   });
 
   @override
+  State<ManageEventPage> createState() =>
+      _ManageEventPageState();
+}
+
+class _ManageEventPageState
+    extends State<ManageEventPage> {
+
+  final EventService _eventService = EventService();
+
+  Map<String, dynamic>? event;
+
+  bool isLoading = true;
+  String? errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    loadEvent();
+  }
+
+  Future<void> loadEvent() async {
+    try {
+      final data = await _eventService.getEventById(
+        widget.eventId,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        event = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      debugPrint("GET EVENT ERROR: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoading = false;
+        errorMessage = e.toString();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (errorMessage != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Manage Event"),
+        ),
+        body: Center(
+          child: Text(
+            "Gagal mengambil event:\n$errorMessage",
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (event == null) {
+      return const Scaffold(
+        body: Center(
+          child: Text("Event tidak ditemukan"),
+        ),
+      );
+    }
+
+    final eventTitle =
+        event!['title']?.toString() ?? 'Untitled Event';
+
     return Scaffold(
       backgroundColor: const Color(0xffF7F8FA),
 
@@ -20,11 +103,12 @@ class ManageEventPage extends StatelessWidget {
 
       body: ListView(
         padding: const EdgeInsets.all(20),
+
         children: [
 
-          const Text(
-            "Food Festival Bandung",
-            style: TextStyle(
+          Text(
+            eventTitle,
+            style: const TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.bold,
             ),
@@ -32,9 +116,9 @@ class ManageEventPage extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          const Text(
+          Text(
             "Manage every aspect of your event from one dashboard.",
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.grey,
             ),
           ),

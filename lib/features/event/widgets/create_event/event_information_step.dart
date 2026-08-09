@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class EventInformationStep extends StatelessWidget {
@@ -9,8 +9,8 @@ class EventInformationStep extends StatelessWidget {
 
   final ValueChanged<String?> onCategoryChanged;
 
-  final File? bannerImage;
-  final File? logoImage;
+  final Uint8List? bannerImage;
+  final Uint8List? logoImage;
 
   final VoidCallback onBannerTap;
   final VoidCallback onLogoTap;
@@ -175,7 +175,7 @@ class EventInformationStep extends StatelessWidget {
 class _UploadCard extends StatelessWidget {
 
   final String title;
-  final File? image;
+  final Uint8List? image;
   final VoidCallback onTap;
 
   const _UploadCard({
@@ -231,12 +231,12 @@ class _UploadCard extends StatelessWidget {
           ],
         ) : ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Image.file(
+          child: Image.memory(
             image!,
             fit: BoxFit.cover,
             width: double.infinity,
             height: double.infinity,
-          ),
+          )
         ),
       ),
     );

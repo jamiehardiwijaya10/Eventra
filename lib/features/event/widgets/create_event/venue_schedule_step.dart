@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'event_type_selector.dart';
 import 'datetime_picker_card.dart';
@@ -24,7 +24,7 @@ class VenueScheduleStep extends StatelessWidget {
   final VoidCallback onOpeningTimeTap;
   final VoidCallback onClosingTimeTap;
 
-  final File? floorplan;
+  final Uint8List? floorplan;
 
   final VoidCallback onFloorplanTap;
 

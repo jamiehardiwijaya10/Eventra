@@ -1,13 +1,12 @@
-import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class CreateEventValidator {
   static String? validateStep1({
     required String eventName,
     required String? category,
-    required File? banner,
-    required File? logo,
+    required Uint8List? banner,
+    required Uint8List? logo,
   }) {
     if (eventName.trim().isEmpty) {
       return "Event name cannot be empty.";
@@ -40,7 +39,7 @@ class CreateEventValidator {
     required DateTime? endDate,
     required TimeOfDay? openingTime,
     required TimeOfDay? closingTime,
-    required File? floorplan,
+    required Uint8List? floorplan,
   }) {
     if (venue.trim().isEmpty) {
       return "Venue name cannot be empty.";
