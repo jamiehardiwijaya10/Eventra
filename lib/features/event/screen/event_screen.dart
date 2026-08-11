@@ -1,4 +1,6 @@
+import 'package:eventra/features/maps/screen/event_location_map_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import '../widgets/attendees_section.dart';
 import '../widgets/bottom_action.dart';
 import '../widgets/description.dart';
@@ -92,6 +94,8 @@ class _EventScreenState extends State<EventScreen> {
                       joined: 15782,
                       rating: 4.8,
                       ticketsLeft: 120,
+                      longitude: 107.72537176669891, 
+                      latitude: -6.940041591250152,
                     ),
 
                     const SizedBox(height: 25),
@@ -128,7 +132,13 @@ class _EventScreenState extends State<EventScreen> {
                           title: "Location",
                           icon: Icons.location_on_outlined,
                           onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.maps);
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (_) => const EventLocationMapScreen(
+                                eventName: "Fleet Snowfluff's Concert",
+                                eventLocation : "Bandung, Jawa Barat",
+                                eventLatLng: LatLng(-6.940041591250152, 107.72537176669891),
+                              ),
+                            ));
                           },
                         ),
 

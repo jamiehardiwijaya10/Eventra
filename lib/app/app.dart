@@ -12,7 +12,7 @@ class EventraApp extends StatelessWidget {
       title: 'Eventra',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      initialRoute: AppRoutes.event,
+      initialRoute: AppRoutes.homecostumer,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

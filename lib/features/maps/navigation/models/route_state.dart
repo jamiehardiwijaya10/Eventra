@@ -1,4 +1,5 @@
 
+import 'package:eventra/core/constant/map_constants.dart';
 import 'package:latlong2/latlong.dart';
 
 enum NavigationStatus {idle, loading, ready, navigating, arrived}
@@ -44,5 +45,47 @@ class RouteState {
     error: error
   );
 
-  
+  String get distanceText {
+    if (distanceMeters == null) return '';
+    if (distanceMeters! >= 1000) {
+      return '${(distanceMeters! / 1000).toStringAsFixed(1)} km';
+    }
+    return '${distanceMeters!.toStringAsFixed(0)} m';
+  }
+
+  String get durationText {
+    if (durationSeconds == null) return '';
+    final mins = (durationSeconds! / 60).round();
+    if (mins >= 60) {
+      final h = mins ~/ 60;
+      final m = mins % 60;
+      
+      return '${h}h ${m}m';
+    }
+    return '$mins min';
+  }
+
+  String get remainingDistanceText {
+    if (distanceMeters == null || routePoints.isEmpty) return '';
+
+    final progress = currentSegmentIndex / AppConstants.markerAnimSteps;
+    final remaining = distanceMeters! * (1 - progress);
+    if (remaining >= 1000) return '${(remaining / 1000).toStringAsFixed(1)} km';
+    return '${remaining.toStringAsFixed(0)} m';
+  }
+
+  String get remainingDurationText {
+    if (durationSeconds == null || routePoints.isEmpty) return '';
+
+    final progress = currentSegmentIndex / AppConstants.markerAnimSteps;
+    final remaining = distanceMeters! * (1 - progress);
+    final mins = (remaining / 60).round();
+    if (mins >= 60) {
+      final h = mins ~/ 60;
+      final m = mins % 60;
+
+      return '${h}h ${m}m';
+    }
+    return '$mins min';
+  }
 }

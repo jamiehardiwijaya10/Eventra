@@ -18,20 +18,35 @@ class RouteNotifier extends StateNotifier<RouteState> {
   RouteNotifier(this._ref) : super(const RouteState());
   
   Future<void> fetchRoute() async {
+    print('>>> FETCH ROUTE CALLED');
+    
     final location = _ref.read(locationProvider).position;
     final destination = _ref.read(selectedPlaceProvider);
 
-    if (location == null || destination == null) return;
+    print('>>> LOCATION: $location');
+    print('>>> DESTINATION: $destination');
+
+    if (location == null || destination == null) {
+      print('>>> ROUTE CANCELLED: missing location/destination');
+      return;
+    };
+
+    print('>>> SETTING LOADING');
 
     state = state.copyWith(status: NavigationStatus.loading, error:null);
 
     try {
+      print('>>> CALLING OSRM');
+
       final url = 
         '${AppConstants.osrmBaseUrl}/${location.longitude},${location.latitude};'
         '${destination.latLng.longitude},${destination.latLng.latitude}'
         '?overview=full&geometries=geojson&steps=true';
 
       final response = await http.get(Uri.parse(url));
+      
+      print('>>> OSRM STATUS: ${response.statusCode}');
+
       if (response.statusCode != 200) throw Exception('OSRM Error');
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
@@ -49,7 +64,11 @@ class RouteNotifier extends StateNotifier<RouteState> {
         durationSeconds: (route['duration'] as num).toDouble(),
         currentSegmentIndex: 0,
       );
+
+      print('>>> ROUTE READY');
     } catch (e) {
+      print('>>> ROUTE ERROR: $e');
+
       state = state.copyWith(
         status: NavigationStatus.idle,
         error: 'Could not load route. Check connection.',
