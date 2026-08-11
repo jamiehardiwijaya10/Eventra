@@ -1,12 +1,12 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../section_titles.dart';
 import '../upload_card.dart';
 
 class UploadAssetsStep extends StatelessWidget {
-  final File? logoImage;
-  final File? bannerImage;
-  final File? boothImage;
+  final Uint8List? logoImage;
+  final Uint8List? bannerImage;
+  final Uint8List? boothImage;
 
   final VoidCallback onLogoTap;
   final VoidCallback onBannerTap;

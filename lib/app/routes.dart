@@ -41,13 +41,6 @@ class AppRoutes {
   static const myevent = "/myevent";
   static const statsevent = "/statsevent";
 
-  static const eventpage = "/eventpage";
-  static const friendspage = "/friendspage";
-  static const boothpage = "/boothpage";
-  static const boothdetail = "/boothdetail";
-  static const profilecostumer = "/profilecostumer";
-  static const mybooth = "/mybooth";
-
   static const ticket = "/ticketsc";
   static const maps = "/maps_screen";
 

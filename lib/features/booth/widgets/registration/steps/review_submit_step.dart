@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../section_titles.dart';
 
@@ -15,9 +15,9 @@ class ReviewSubmitStep extends StatelessWidget {
 
   final List<String> selectedProducts;
 
-  final File? logoImage;
-  final File? bannerImage;
-  final File? boothImage;
+  final Uint8List? logoImage;
+  final Uint8List? bannerImage;
+  final Uint8List? boothImage;
 
   final bool agree;
   final ValueChanged<bool?> onAgreeChanged;
@@ -266,7 +266,7 @@ class _ReviewTile extends StatelessWidget {
 
 class _ImagePreview extends StatelessWidget {
   final String title;
-  final File? image;
+  final Uint8List? image;
 
   const _ImagePreview({
     required this.title,
@@ -292,7 +292,7 @@ class _ImagePreview extends StatelessWidget {
             color: Colors.grey.shade200,
             child: const Icon(Icons.image),
           )
-              : Image.file(
+              : Image.memory(
             image!,
             width: 70,
             height: 70,

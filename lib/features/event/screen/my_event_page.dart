@@ -230,22 +230,33 @@ class _MyEventPageState extends State<MyEventPage> {
                           " - "
                           "${formatDate(event['end_date'])}",
 
-                      boothCount: 0,
+                      boothCount:
+                          int.tryParse(
+                            event['maximum_booth']?.toString() ?? '0',
+                          ) ??
+                          0,
 
-                      visitorCount: 0,
+                      visitorCount:
+                          int.tryParse(
+                            event['visitor_count']?.toString() ?? '0',
+                          ) ??
+                          0,
 
                       status: status,
 
-                      onManage: () {
-                        Navigator.push(
+                      onManage: () async {
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                ManageEventPage(
+                            builder: (_) => ManageEventPage(
                               eventId: eventId,
                             ),
                           ),
                         );
+
+                        if (result == true) {
+                          loadMyEvents();
+                        }
                       },
                     ),
                   );

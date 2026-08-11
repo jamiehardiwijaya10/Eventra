@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/event_service.dart';
 import '../widgets/my/management_menu_card.dart';
+import 'booth_management_page.dart';
+import 'event_settings_page.dart';
+import 'booth_management_page.dart';
+import 'registration_requests_page.dart';
+import 'statistics_page.dart';
 
 class ManageEventPage extends StatefulWidget {
   final String eventId;
@@ -11,17 +16,13 @@ class ManageEventPage extends StatefulWidget {
   });
 
   @override
-  State<ManageEventPage> createState() =>
-      _ManageEventPageState();
+  State<ManageEventPage> createState() => _ManageEventPageState();
 }
 
-class _ManageEventPageState
-    extends State<ManageEventPage> {
-
+class _ManageEventPageState extends State<ManageEventPage> {
   final EventService _eventService = EventService();
 
   Map<String, dynamic>? event;
-
   bool isLoading = true;
   String? errorMessage;
 
@@ -44,8 +45,6 @@ class _ManageEventPageState
         isLoading = false;
       });
     } catch (e) {
-      debugPrint("GET EVENT ERROR: $e");
-
       if (!mounted) return;
 
       setState(() {
@@ -125,11 +124,22 @@ class _ManageEventPageState
 
           const SizedBox(height: 25),
 
+          const SizedBox(height: 25),
+
           ManagementMenuCard(
             icon: Icons.storefront,
             title: "Booth Management",
             subtitle: "Manage all registered booths",
-            onTap: () {},
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BoothManagementPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 15),
@@ -138,9 +148,17 @@ class _ManageEventPageState
             icon: Icons.fact_check_outlined,
             title: "Registration Requests",
             subtitle: "Approve or reject booth registration",
-            onTap: () {},
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RegistrationRequestsPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+            },
           ),
-
           const SizedBox(height: 15),
 
           ManagementMenuCard(
@@ -156,7 +174,16 @@ class _ManageEventPageState
             icon: Icons.bar_chart,
             title: "Statistics",
             subtitle: "View visitor and booth analytics",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => StatisticsPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 15),
@@ -174,7 +201,20 @@ class _ManageEventPageState
             icon: Icons.settings_outlined,
             title: "Settings",
             subtitle: "Configure event information",
-            onTap: () {},
+            onTap: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => EventSettingsPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+
+              if (result == true) {
+                loadEvent();
+              }
+            },
           ),
         ],
       ),

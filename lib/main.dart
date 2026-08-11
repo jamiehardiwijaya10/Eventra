@@ -12,8 +12,6 @@ Future<void> main() async {
 
   await SupabaseService.initialize();
 
-  runApp(const EventraApp());
-void main() {
   runApp(const ProviderScope(
     child: EventraApp(),
     ),

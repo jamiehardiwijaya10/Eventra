@@ -576,17 +576,52 @@ class _CreateEventPageState extends State<CreateEventPage> {
             'event-banner-${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
 
-      debugPrint("BANNER URL: $bannerUrl");
 
-      await _eventService.createEvent(
-        title: eventNameController.text.trim(),
-        description: descriptionController.text.trim(),
-        banner: bannerUrl,
-        location: addressController.text.trim(),
-        startDate: startDate!,
-        endDate: endDate!,
-        categoryId: categoryId,
+      debugPrint("BANNER URL: $bannerUrl");
+      if (logoImage == null) {
+        throw Exception("Logo event belum dipilih.");
+      }
+
+      final logoUrl = await _eventService.uploadEventImage(
+        bytes: logoImage!,
+        fileName:
+            'event-logo-${DateTime.now().millisecondsSinceEpoch}.jpg',
+        folder: 'logos',
       );
+
+      final registrationFee = int.tryParse(
+        registrationFeeController.text.trim(),
+      );
+
+      if (registrationFee == null) {
+        throw Exception("Registration fee tidak valid.");
+      }
+
+      final maximumBooth = int.tryParse(
+        maximumBoothController.text.trim(),
+      );
+
+      if (maximumBooth == null) {
+        throw Exception("Maximum booth tidak valid.");
+      }
+
+     await _eventService.createEvent(
+      title: eventNameController.text.trim(),
+      description: descriptionController.text.trim(),
+      banner: bannerUrl,
+      logo: logoUrl,
+      location: addressController.text.trim(),
+      venueName: venueController.text.trim(),
+      eventType: isIndoor ? 'Indoor' : 'Outdoor',
+      startDate: startDate!,
+      endDate: endDate!,
+      openingTime: openingTime!,
+      closingTime: closingTime!,
+      registrationDeadline: registrationDeadline!,
+      registrationFee: registrationFee,
+      maximumBooth: maximumBooth,
+      categoryId: categoryId,
+    );
 
       if (!mounted) return;
 
