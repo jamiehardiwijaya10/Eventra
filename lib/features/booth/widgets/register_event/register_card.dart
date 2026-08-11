@@ -9,8 +9,10 @@ class EventRegisterModel {
   final String location;
   final int totalBooth;
   final bool registrationOpen;
+  final String eventId;
 
   const EventRegisterModel({
+    required this.eventId,
     required this.image,
     required this.title,
     required this.date,
@@ -57,12 +59,24 @@ class EventRegisterCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(22),
             ),
-            child: Image.asset(
+            child: Image.network(
               event.image,
               height: 170,
               width: double.infinity,
               fit: BoxFit.cover,
-            ),
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 170,
+                  width: double.infinity,
+                  color: Colors.grey.shade200,
+                  child: const Icon(
+                    Icons.image_not_supported_outlined,
+                    size: 50,
+                    color: Colors.grey,
+                  ),
+                );
+              },
+            )
           ),
 
           Padding(

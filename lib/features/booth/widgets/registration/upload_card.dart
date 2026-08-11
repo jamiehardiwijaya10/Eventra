@@ -1,12 +1,11 @@
-import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UploadCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final File? image;
+  final Uint8List? image;
   final VoidCallback onTap;
   final IconData icon;
 
@@ -96,12 +95,12 @@ class UploadCard extends StatelessWidget {
           child: Stack(
             children: [
 
-              Image.file(
-                image!,
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+             Image.memory(
+              image!,
+              height: 220,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
 
               Positioned(
                 right: 12,

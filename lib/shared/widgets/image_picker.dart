@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerService {
   static final ImagePicker _picker = ImagePicker();
-  static Future<File?> pickFromGallery() async {
+
+  static Future<Uint8List?> pickFromGallery() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 85,
@@ -14,16 +15,13 @@ class ImagePickerService {
       return null;
     }
 
-    return File(image.path);
+    return await image.readAsBytes();
   }
 
-  static Future<File?> pickFromCamera() async {
-
+  static Future<Uint8List?> pickFromCamera() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.camera,
-
       imageQuality: 85,
-
       maxWidth: 1920,
     );
 
@@ -31,6 +29,6 @@ class ImagePickerService {
       return null;
     }
 
-    return File(image.path);
+    return await image.readAsBytes();
   }
 }
