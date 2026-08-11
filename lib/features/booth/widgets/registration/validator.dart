@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 class RegistrationValidator {
   RegistrationValidator._();
@@ -61,9 +61,9 @@ class RegistrationValidator {
   // ==========================================================
 
   static String? validateUpload({
-    required File? logo,
-    required File? banner,
-    required File? booth,
+    Uint8List? logo,
+    Uint8List? banner,
+    Uint8List? booth,
   }) {
     if (logo == null) {
       return "Please upload booth logo.";

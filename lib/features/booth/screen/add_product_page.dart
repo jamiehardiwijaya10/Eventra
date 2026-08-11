@@ -124,12 +124,12 @@ class _AddProductPageState extends State<AddProductPage> {
               maxLines: 4,
             ),
 
-            UploadCard(
-              title: "Upload Product Image",
-              subtitle: "JPG, PNG (Max 5 MB)",
-              image: productImage,
-              onTap: () {},
-            ),
+            // UploadCard(
+            //   title: "Upload Product Image",
+            //   subtitle: "JPG, PNG (Max 5 MB)",
+            //   image: productImage,
+            //   onTap: () {},
+            // ),
 
             const SizedBox(height: 25),
 

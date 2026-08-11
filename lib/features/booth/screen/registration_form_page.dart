@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../widgets/registration/product_selector.dart';
 import '../widgets/registration/step_indicator.dart';
@@ -11,10 +11,14 @@ import '../widgets/registration/validator.dart';
 import 'registration_success_page.dart';
 import 'add_product_page.dart';
 import '../../../shared/widgets/image_picker.dart';
+import '../../../core/services/booth_service.dart';
 
 class RegistrationFormPage extends StatefulWidget {
+  final String eventId;
+
   const RegistrationFormPage({
     super.key,
+    required this.eventId,
   });
 
   @override
@@ -27,6 +31,7 @@ class _RegistrationFormPageState
 
   int currentStep = 0;
 
+  final BoothService _boothService = BoothService();
   bool agree = false;
   bool isSubmitting = false;
 
@@ -41,9 +46,9 @@ class _RegistrationFormPageState
   final emailController = TextEditingController();
   final instagramController = TextEditingController();
 
-  File? logoImage;
-  File? bannerImage;
-  File? boothImage;
+  Uint8List? logoImage;
+  Uint8List? bannerImage;
+  Uint8List? boothImage;
 
   final List<ProductSelectorModel> products = [
 
@@ -187,23 +192,41 @@ class _RegistrationFormPageState
 
   Future<void> submitRegistration() async {
     if (!agree) return;
+
     setState(() {
       isSubmitting = true;
     });
 
-    await Future.delayed(
-      const Duration(seconds: 2),
-    );
+    try {
+      await _boothService.createBooth(
+        eventId: widget.eventId,
+        name: boothNameController.text.trim(),
+        description: descriptionController.text.trim(),
+      );
 
-    setState(() {
-      isSubmitting = false;
-    });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const RegistrationSuccessPage(),
-      ),
-    );
+      if (!mounted) return;
+
+      setState(() {
+        isSubmitting = false;
+      });
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const RegistrationSuccessPage(),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        isSubmitting = false;
+      });
+
+      showError(
+        "Gagal mendaftarkan booth: $e",
+      );
+    }
   }
 
   Widget buildStepBody() {
