@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../app/routes.dart';
+import '../../../core/services/auth_services.dart';
 
 class OnboardingScreen1 extends StatelessWidget {
-  const OnboardingScreen1({super.key});
+  OnboardingScreen1({super.key});
+  final AuthService _authService = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -118,12 +120,12 @@ class OnboardingScreen1 extends StatelessWidget {
                       children: [
 
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            await _authService.goToHomeByRole(context);
+                          },
                           child: const Text(
                             "Skip",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
 

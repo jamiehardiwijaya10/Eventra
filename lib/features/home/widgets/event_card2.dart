@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/routes.dart';
 
 class EventListCard extends StatelessWidget {
+  final String eventId;
   final String image;
   final String title;
-  final String date;
+  final String startDate;
+  final String endDate;
   final String location;
-  final String price;
 
   const EventListCard({
     super.key,
+    required this.eventId,
     required this.image,
     required this.title,
-    required this.date,
+    required this.startDate,
+    required this.endDate,
     required this.location,
-    required this.price,
   });
 
   @override
@@ -41,11 +44,28 @@ class EventListCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.asset(
-              image,
+            child: SizedBox(
               width: 70,
               height: 70,
-              fit: BoxFit.cover,
+              child: image.isEmpty
+                  ? Container(
+                      color: Colors.grey.shade200,
+                      child: const Icon(
+                        Icons.image_not_supported,
+                      ),
+                    )
+                  : Image.network(
+                      image,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.image_not_supported,
+                          ),
+                        );
+                      },
+                    ),
             ),
           ),
 
@@ -78,12 +98,14 @@ class EventListCard extends StatelessWidget {
 
                     const SizedBox(width: 4),
 
-                    Text(
-                      date,
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
+                    Expanded(
+                      child: Text(
+                    "$startDate - $endDate",
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                    ),
+                  ),
                     ),
 
                     const SizedBox(width: 8),
@@ -128,7 +150,7 @@ class EventListCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  price,
+                  "Free",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
@@ -140,11 +162,18 @@ class EventListCard extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.event,
+                      arguments: eventId,
+                    );
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    tapTargetSize:
+                        MaterialTapTargetSize.shrinkWrap,
                   ),
                   child: Text(
                     "JOIN NOW",

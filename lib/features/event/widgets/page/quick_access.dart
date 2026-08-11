@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../core/theme/app_color.dart';
+import '../../../../core/theme/app_color.dart';
 
-class EventMenu {
+class QuickAccessItem {
   final String title;
   final IconData icon;
   final VoidCallback onTap;
 
-  const EventMenu({
+  const QuickAccessItem({
     required this.title,
     required this.icon,
     required this.onTap,
   });
 }
 
-class EventMenuSection extends StatelessWidget {
-  final List<EventMenu> menus;
+class QuickAccessSection extends StatelessWidget {
+  final List<QuickAccessItem> items;
 
-  const EventMenuSection({
+  const QuickAccessSection({
     super.key,
-    required this.menus,
+    required this.items,
   });
 
   @override
@@ -29,7 +29,7 @@ class EventMenuSection extends StatelessWidget {
       children: [
 
         Text(
-          "Explore This Event",
+          "Quick Access",
           style: GoogleFonts.poppins(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -39,35 +39,36 @@ class EventMenuSection extends StatelessWidget {
         const SizedBox(height: 4),
 
         Text(
-          "Everything you need in one place.",
+          "Everything you need in one tap.",
           style: GoogleFonts.poppins(
             color: Colors.grey,
             fontSize: 13,
           ),
         ),
 
-        const SizedBox(height: 20),
+        const SizedBox(height: 18),
 
         GridView.builder(
-          padding: EdgeInsets.zero,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: menus.length,
+          itemCount: items.length,
           gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
+            crossAxisCount: 2,
             crossAxisSpacing: 14,
             mainAxisSpacing: 14,
-            mainAxisExtent: 95,
+            mainAxisExtent: 90,
           ),
           itemBuilder: (context, index) {
-
-            final menu = menus[index];
+            final item = items[index];
 
             return InkWell(
               borderRadius: BorderRadius.circular(18),
-              onTap: menu.onTap,
+              onTap: item.onTap,
               child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(18),
@@ -78,40 +79,43 @@ class EventMenuSection extends StatelessWidget {
                     BoxShadow(
                       color: Colors.black.withOpacity(.04),
                       blurRadius: 10,
-                      offset: const Offset(0, 3),
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
 
-                child: Column(
-                  mainAxisAlignment:
-                  MainAxisAlignment.center,
+                child: Row(
                   children: [
 
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: 46,
+                      height: 46,
                       decoration: BoxDecoration(
-                        color: AppColor.primary.withOpacity(0.80),
+                        color: AppColor.primary.withOpacity(.12),
                         borderRadius:
-                        BorderRadius.circular(16),
+                        BorderRadius.circular(14),
                       ),
                       child: Icon(
-                        menu.icon,
-                        color: AppColor.white,
-                        size: 28,
+                        item.icon,
+                        color: AppColor.primary,
                       ),
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(width: 14),
 
-                    Text(
-                      menu.title,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        item.title,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
+                    ),
+
+                    const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 14,
+                      color: Colors.grey,
                     ),
                   ],
                 ),

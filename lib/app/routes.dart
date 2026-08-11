@@ -10,6 +10,14 @@ import '../features/home/screen/home_screen_costumer.dart';
 import '../features/home/screen/home_screen_booth.dart';
 import '../features/home/screen/home_screen_eo.dart';
 import '../features/event/screen/event_screen.dart';
+import '../features/event/screen/event_page.dart';
+import '../features/social/screen/friends_page.dart';
+import '../features/booth/screen/booth_page.dart';
+import '../features/booth/screen/booth_detail.dart';
+import '../features/profile/screen/profile_screen.dart';
+import '../features/booth/screen/my_booth_page.dart';
+import '../features/event/screen/my_event_page.dart';
+import '../features/event/screen/event_statistics.dart';
 import '../features/maps/screen/maps_screen.dart';
 
 class AppRoutes {
@@ -24,6 +32,15 @@ class AppRoutes {
   static const homebooth = "/home_booth";
   static const homeeo = "/home_eo";
   static const event = "/event";
+  static const eventpage = "/eventpage";
+  static const friendspage = "/friendspage";
+  static const boothpage = "/boothpage";
+  static const boothdetail = "/boothdetail";
+  static const profilecostumer = "/profilecostumer";
+  static const mybooth = "/mybooth";
+  static const myevent = "/myevent";
+  static const statsevent = "/statsevent";
+
   static const eventpage = "/eventpage";
   static const friendspage = "/friendspage";
   static const boothpage = "/boothpage";
@@ -82,8 +99,52 @@ class AppRoutes {
         );
 
       case event:
+        final eventId = settings.arguments as String;
+
         return MaterialPageRoute(
-          builder: (_) => EventScreen(),
+          builder: (_) => EventScreen(
+            eventId: eventId,
+          ),
+        );
+
+      case eventpage:
+        return MaterialPageRoute(
+          builder: (_) => EventPage(),
+        );
+
+      case friendspage:
+        return MaterialPageRoute(
+          builder: (_) => FriendsChatPage(),
+        );
+
+      case boothpage:
+        return MaterialPageRoute(
+          builder: (_) => BoothPage(),
+        );
+
+      case boothdetail:
+        return MaterialPageRoute(
+          builder: (_) => BoothDetailPage(),
+        );
+
+      case profilecostumer:
+        return MaterialPageRoute(
+          builder: (_) => ProfilePage(),
+        );
+
+      case mybooth:
+        return MaterialPageRoute(
+          builder: (_) => MyBoothPage(),
+        );
+
+      case myevent:
+        return MaterialPageRoute(
+          builder: (_) => MyEventPage(),
+        );
+
+      case statsevent:
+        return MaterialPageRoute(
+          builder: (_) => StatisticsPage(),
         );
 
       case ticket:
