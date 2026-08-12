@@ -12,6 +12,7 @@ import 'package:eventra/features/event/widgets/detail/organizer_card.dart';
 import 'package:eventra/features/event/widgets/detail/event_top_bar.dart';
 import '../../../core/services/event_service.dart';
 import 'package:intl/intl.dart';
+import 'package:eventra/features/ticket/screen/ticket_screen.dart';
 
 class EventScreen extends StatefulWidget {
   final String eventId;
@@ -107,7 +108,14 @@ class _EventScreenState extends State<EventScreen> {
           });
         },
         onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.ticket);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => TicketScreen(
+                eventName: _event!['title']?.toString() ?? 'Event',
+              ),
+            ),
+          );
         },
       ),
 
@@ -165,8 +173,9 @@ class _EventScreenState extends State<EventScreen> {
                       joined: 15782,
                       rating: 4.8,
                       ticketsLeft: 120,
-                      longitude: 107.72537176669891, 
-                      latitude: -6.940041591250152,
+                      
+                      latitude: (_event!['latitude'] as num).toDouble(),
+                      longitude: (_event!['longitude'] as num).toDouble(),
                     ),
                     const SizedBox(height: 25),
 
@@ -200,11 +209,17 @@ class _EventScreenState extends State<EventScreen> {
                           title: "Location",
                           icon: Icons.location_on_outlined,
                           onTap: () {
+                            final latitude = (_event!['latitude'] as num).toDouble();
+                            final longitude = (_event!['longitude'] as num).toDouble();
+
                             Navigator.push(context, MaterialPageRoute(
-                              builder: (_) => const EventLocationMapScreen(
-                                eventName: "Fleet Snowfluff's Concert",
-                                eventLocation : "Bandung, Jawa Barat",
-                                eventLatLng: LatLng(-6.940041591250152, 107.72537176669891),
+                              builder: (_) => EventLocationMapScreen(
+                                eventName: _event!['title']?.toString() ?? 'Event',
+                                eventLocation : _event!['location']?.toString() ?? '-',
+                                eventLatLng: LatLng(
+                                  (latitude as num).toDouble(),
+                                  (longitude as num).toDouble(),
+                                ),
                               ),
                             ));
                           },
@@ -233,7 +248,11 @@ class _EventScreenState extends State<EventScreen> {
                           icon:
                           Icons.confirmation_number_outlined,
                           onTap: () {
-                            Navigator.pushNamed(context, AppRoutes.ticket);
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.ticket,
+                              arguments: _event!['title']?.toString() ?? 'Event',
+                            );
                           },
                         ),
 

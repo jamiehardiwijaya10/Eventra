@@ -141,8 +141,12 @@ class AppRoutes {
         );
 
       case ticket:
+        final eventName = settings.arguments as String? ?? 'Event';
+
         return MaterialPageRoute(
-          builder: (_) => TicketScreen(),
+          builder: (_) => TicketScreen(
+            eventName: eventName,
+          ),
         );
 
       case maps:

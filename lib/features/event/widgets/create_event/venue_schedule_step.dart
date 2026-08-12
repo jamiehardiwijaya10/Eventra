@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'event_type_selector.dart';
 import 'datetime_picker_card.dart';
 import 'floorplan_upload_card.dart';
+import 'package:eventra/features/maps/screen/eo_location_picker_screen.dart';
 
 class VenueScheduleStep extends StatelessWidget {
   final bool isIndoor;
@@ -28,6 +29,12 @@ class VenueScheduleStep extends StatelessWidget {
 
   final VoidCallback onFloorplanTap;
 
+  final void Function(
+    String address,
+    double latitude,
+    double longitude,
+  ) onLocationSelected;
+
   const VenueScheduleStep({
     super.key,
     required this.isIndoor,
@@ -44,12 +51,30 @@ class VenueScheduleStep extends StatelessWidget {
     required this.onClosingTimeTap,
     required this.floorplan,
     required this.onFloorplanTap,
+    required this.onLocationSelected,
   });
 
   String formatDate(DateTime? date) {
     if (date == null) return "Select Date";
 
     return "${date.day}/${date.month}/${date.year}";
+  }
+
+  Future<void> _selectLocation(BuildContext context) async {
+    final result = await Navigator.push<SelectedEventLocation>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const EventLocationPickerScreen(),
+      ),
+    );
+
+    if (result == null) return;
+
+    onLocationSelected(
+      result.address,
+      result.latitude,
+      result.longitude,
+    );
   }
 
   @override
@@ -108,25 +133,60 @@ class VenueScheduleStep extends StatelessWidget {
 
         const SizedBox(height: 20),
 
+        const Text(
+          "Venue Address",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
+        const SizedBox(height: 10,),
+        
         TextField(
           controller: addressController,
           maxLines: 2,
+          readOnly: true,
+          onTap: () => _selectLocation(context),
           decoration: InputDecoration(
-            labelText: "Venue Address",
-            hintText: "Jl. Tamansari No.73 Bandung",
+            hintText: "Select location on map",
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
             ),
+            suffixIcon: const Icon(
+              Icons.location_on_outlined,
+            ),
           ),
         ),
 
-        const SizedBox(height: 28),
+        const SizedBox(height: 12,),
+
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: OutlinedButton.icon(
+            onPressed: () => _selectLocation(context),
+            icon: const Icon(
+              Icons.location_on_outlined,
+            ),
+            label: Text(
+              addressController.text.isEmpty
+                  ? "Choose Location on Map"
+                  : "Change Location",
+            ),
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 28,),        
 
         Row(
           children: [
-
             Expanded(
               child: DateTimePickerCard(
                 title: "Start Date",
