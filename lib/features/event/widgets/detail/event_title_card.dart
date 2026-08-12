@@ -12,6 +12,8 @@ class EventTitleCard extends StatelessWidget {
   final double rating;
   final int joined;
   final int ticketsLeft;
+  final double latitude;
+  final double longitude;
 
   const EventTitleCard({
     super.key,
@@ -23,6 +25,8 @@ class EventTitleCard extends StatelessWidget {
     required this.rating,
     required this.joined,
     required this.ticketsLeft,
+    required this.latitude,
+    required this.longitude,
   });
 
   String formatNumber(int value) {

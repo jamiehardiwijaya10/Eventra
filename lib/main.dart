@@ -1,7 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/services/supabase_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +12,10 @@ Future<void> main() async {
 
   await SupabaseService.initialize();
 
-  runApp(const EventraApp());
+  runApp(const ProviderScope(
+    child: EventraApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

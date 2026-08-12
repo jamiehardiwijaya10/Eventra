@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../core/services/event_service.dart';
 import '../widgets/create_event/event_information_step.dart';
 import '../widgets/create_event/venue_schedule_step.dart';
@@ -47,6 +48,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   final addressController =
   TextEditingController();
+
+  LatLng? selectedLocation;
+
+  double? selectedLatitude;
+  double? selectedLongitude;
 
   DateTime? startDate;
   DateTime? endDate;
@@ -313,6 +319,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
           venueController: venueController,
           addressController: addressController,
 
+          onLocationSelected: (address, latitude, longitude) {
+            setState(() {
+              addressController.text = address;
+              selectedLocation = LatLng(latitude, longitude);
+              selectedLatitude = latitude;
+              selectedLongitude = longitude;
+            });
+          },
+
           startDate: startDate,
           endDate: endDate,
 
@@ -546,6 +561,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
       return;
     }
 
+    if (selectedLocation == null) {
+      showValidationError(
+        "Event address wajib diisi."
+      );
+      return;
+    }
+
     if (bannerImage == null) {
       showValidationError(
         "Banner event wajib dipilih.",
@@ -605,20 +627,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
         throw Exception("Maximum booth tidak valid.");
       }
 
+      if (selectedLatitude == null || selectedLongitude == null) {
+        showValidationError(
+          "Please select the event location on the map.",
+        );
+        return;
+      }
+
      await _eventService.createEvent(
       title: eventNameController.text.trim(),
       description: descriptionController.text.trim(),
       banner: bannerUrl,
       logo: logoUrl,
+      
       location: addressController.text.trim(),
       venueName: venueController.text.trim(),
+      latitude: selectedLocation!.latitude,
+      longitude: selectedLocation!.longitude,
+      
       eventType: isIndoor ? 'Indoor' : 'Outdoor',
+
       startDate: startDate!,
       endDate: endDate!,
       openingTime: openingTime!,
       closingTime: closingTime!,
       registrationDeadline: registrationDeadline!,
       registrationFee: registrationFee,
+      
       maximumBooth: maximumBooth,
       categoryId: categoryId,
     );
