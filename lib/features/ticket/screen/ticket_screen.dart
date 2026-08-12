@@ -3,7 +3,6 @@ import 'package:eventra/core/theme/app_color.dart';
 
 const Color kMutedTextColor = Color(0xFF5A6266);
 
-/// Formats an int amount as Indonesian Rupiah, e.g. 150000 -> "Rp150.000"
 String formatRupiah(num amount) {
   final str = amount.round().toString();
   final buffer = StringBuffer();
@@ -38,7 +37,6 @@ class _TicketScreenState extends State<TicketScreen> {
     'Aquatic Show',
   ];
 
-  // Each category now has its own independent ticket list.
   late final List<List<TicketType>> ticketsByCategory = [
     // Clown Show
     const [
@@ -70,8 +68,6 @@ class _TicketScreenState extends State<TicketScreen> {
     ],
   ];
 
-  // Quantities are tracked separately per category so switching tabs
-  // doesn't wipe out what the user already selected elsewhere.
   late final List<List<int>> quantitiesByCategory = List.generate(
     ticketsByCategory.length,
     (i) => List.filled(ticketsByCategory[i].length, 0),
@@ -94,8 +90,6 @@ class _TicketScreenState extends State<TicketScreen> {
     });
   }
 
-  // Totals across ALL categories, so the checkout bar reflects the whole
-  // cart even if tickets were picked under more than one category.
   num get totalPrice {
     num total = 0;
 
@@ -217,8 +211,6 @@ class _TicketScreenState extends State<TicketScreen> {
 
                 const SizedBox(height: 18),
 
-                // Keyed by ticket name so Flutter doesn't reuse/confuse
-                // widget state when switching between categories.
                 ...tickets.asMap().entries.map(
                   (entry) {
                     final index = entry.key;
