@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import '../../app/routes.dart';
+import '../../app/routes.dart';
 import '../../core/theme/app_color.dart';
 
 class NavBar extends StatelessWidget {
@@ -17,19 +17,31 @@ class NavBar extends StatelessWidget {
 
     switch (index) {
       case 0:
-        page = "Home";
+         Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.homebooth,
+              );
         break;
 
       case 1:
-        page = "Event";
+         Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.eventpage,
+              );
         break;
 
       case 3:
-        page = "Booth";
+         Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.mybooth,
+              );
         break;
 
       case 4:
-        page = "Profile";
+         Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.profilecostumer,
+              );
         break;
     }
 

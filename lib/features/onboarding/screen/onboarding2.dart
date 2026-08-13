@@ -120,12 +120,17 @@ class OnboardingScreen2 extends StatelessWidget {
                       children: [
 
                         TextButton(
-                          onPressed: () async {
-                            await _authService.goToHomeByRole(context);
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.login,
+                            );
                           },
                           child: const Text(
                             "Skip",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
                           ),
                         ),
 

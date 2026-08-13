@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_text_style.dart';
 import '../../../core/theme/app_color.dart';
-import '../../../core/services/auth_services.dart';
+import '../../../app/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen3 extends StatelessWidget {
-  OnboardingScreen3({super.key});
-  final AuthService _authService = AuthService();
+  const OnboardingScreen3({super.key});
+
+  Future<void> _finishOnboarding(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(
+      'has_seen_onboarding',
+      true,
+    );
+
+    if (!context.mounted) return;
+
+    Navigator.pushReplacementNamed(
+      context,
+      AppRoutes.login,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +64,7 @@ class OnboardingScreen3 extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
+
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -115,12 +132,12 @@ class OnboardingScreen3 extends StatelessWidget {
 
                     Row(
                       mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                          MainAxisAlignment.spaceBetween,
                       children: [
 
                         TextButton(
                           onPressed: () async {
-                            await _authService.goToHomeByRole(context);
+                            await _finishOnboarding(context);
                           },
                           child: const Text(
                             "Skip",
@@ -132,7 +149,7 @@ class OnboardingScreen3 extends StatelessWidget {
 
                         TextButton(
                           onPressed: () async {
-                            await _authService.goToHomeByRole(context);
+                            await _finishOnboarding(context);
                           },
                           child: const Text(
                             "Get Started",

@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      Navigator.pushReplacementNamed(context, AppRoutes.onboarding1,);
+      await _authService.goToHomeByRole(context);
 
     } on AuthException catch (e) {
       if (!mounted) return;

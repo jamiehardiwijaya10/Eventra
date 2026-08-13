@@ -42,7 +42,7 @@ class NavBar extends StatelessWidget {
             case 1:
               Navigator.pushReplacementNamed(
                 context,
-                AppRoutes.event,
+                AppRoutes.eventpage,
               );
               break;
 

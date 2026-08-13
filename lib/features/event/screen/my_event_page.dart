@@ -10,7 +10,12 @@ import 'create_event_page.dart';
 import '../../../shared/widgets/navbar_eo.dart';
 
 class MyEventPage extends StatefulWidget {
-  const MyEventPage({super.key});
+  final String? focusSection;
+
+  const MyEventPage({
+    super.key,
+    this.focusSection,
+  });
 
   @override
   State<MyEventPage> createState() => _MyEventPageState();
@@ -19,6 +24,9 @@ class MyEventPage extends StatefulWidget {
 class _MyEventPageState extends State<MyEventPage> {
   final TextEditingController searchController = TextEditingController();
   final EventService _eventService = EventService();
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _currentSectionKey = GlobalKey();
+  final GlobalKey _upcomingSectionKey = GlobalKey();
 
   String selectedStatus = "All";
 
@@ -29,12 +37,22 @@ class _MyEventPageState extends State<MyEventPage> {
   @override
   void initState() {
     super.initState();
+
+    if (widget.focusSection == "current") {
+      selectedStatus = "Ongoing";
+    } else if (widget.focusSection == "upcoming") {
+      selectedStatus = "Upcoming";
+    } else if (widget.focusSection == "finished") {
+      selectedStatus = "Finished";
+    }
+
     loadMyEvents();
   }
 
   @override
   void dispose() {
     searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -79,9 +97,8 @@ class _MyEventPageState extends State<MyEventPage> {
           search.isEmpty ||
           title.contains(search) ||
           location.contains(search);
-
-      final status =
-          (event['status'] ?? '').toString().toLowerCase();
+          
+      final status = calculateStatus(event).toLowerCase();
 
       final matchesStatus =
           selectedStatus == "All" ||
