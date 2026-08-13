@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../app/routes.dart';
+import '../../event/screen/manage_event_page.dart';
 
 class EventListCard extends StatelessWidget {
   final String eventId;
@@ -153,7 +155,16 @@ class EventListCard extends StatelessWidget {
                 const SizedBox(height: 10),
 
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ManageEventPage(
+                          eventId: eventId,
+                        ),
+                      ),
+                    );
+                  },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,

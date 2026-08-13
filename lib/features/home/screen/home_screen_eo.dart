@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-
+import '../../../app/routes.dart';
 import '../../../core/theme/app_color.dart';
 import '../../../shared/widgets/navbar_eo.dart';
 import '../widgets/event_card_eo.dart';
 import '../../../core/services/event_service.dart';
 import '../../event/screen/create_event_page.dart';
+import '../../event/screen/my_event_page.dart';
 
 class HomeScreenEo extends StatefulWidget {
   const HomeScreenEo({super.key});
@@ -23,7 +24,7 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
   bool _isLoadingEvents = true;
   String? _eventError;
 
-    List<Map<String, dynamic>> get _currentEvents {
+  List<Map<String, dynamic>> get _allCurrentEvents {
     final now = DateTime.now();
 
     return _myEvents.where((event) {
@@ -43,7 +44,7 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
     }).toList();
   }
 
-  List<Map<String, dynamic>> get _upcomingEvents {
+  List<Map<String, dynamic>> get _allUpcomingEvents {
     final now = DateTime.now();
 
     return _myEvents.where((event) {
@@ -57,6 +58,14 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
 
       return start.isAfter(now);
     }).toList();
+  }
+
+  List<Map<String, dynamic>> get _currentEvents {
+    return _allCurrentEvents.take(5).toList();
+  }
+
+  List<Map<String, dynamic>> get _upcomingEvents {
+    return _allUpcomingEvents.take(5).toList();
   }
 
   String _formatDate(String? date) {
@@ -218,7 +227,9 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
                                 const SizedBox(height: 6),
 
                                 Text(
-                                  "1",
+                                  _isLoadingEvents
+                                    ? "-"
+                                    : _allCurrentEvents.length.toString(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -274,7 +285,9 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
                                 const SizedBox(height: 6),
 
                                 Text(
-                                  "3",
+                                  _isLoadingEvents
+                                    ? "-"
+                                    : _allUpcomingEvents.length.toString(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -364,7 +377,13 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
                         ),
 
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              AppRoutes.myevent,
+                              arguments: "current",
+                            );
+                          },
                           child: const Text(
                             "VIEW ALL",
                             style: TextStyle(color: Colors.black),
@@ -407,7 +426,16 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
                         ),
 
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const MyEventPage(
+                                  focusSection: "upcoming",
+                                ),
+                              ),
+                            );
+                          },
                           child: const Text(
                             "VIEW ALL",
                             style: TextStyle(color: Colors.black),

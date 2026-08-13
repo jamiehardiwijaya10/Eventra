@@ -40,7 +40,6 @@ class AppRoutes {
   static const mybooth = "/mybooth";
   static const myevent = "/myevent";
   static const statsevent = "/statsevent";
-
   static const ticket = "/ticketsc";
   static const maps = "/maps_screen";
 
@@ -132,7 +131,9 @@ class AppRoutes {
 
       case myevent:
         return MaterialPageRoute(
-          builder: (_) => MyEventPage(),
+          builder: (_) => MyEventPage(
+            focusSection: settings.arguments as String?,
+          ),
         );
 
       case statsevent:

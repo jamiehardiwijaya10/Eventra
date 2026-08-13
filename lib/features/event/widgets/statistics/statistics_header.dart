@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_color.dart';
 
 class StatisticsHeader extends StatelessWidget {
-  final String selectedEvent;
-  final List<String> events;
+  final String? selectedEventId;
+  final List<Map<String, dynamic>> events;
   final ValueChanged<String?> onEventChanged;
 
   const StatisticsHeader({
     super.key,
-    required this.selectedEvent,
+    required this.selectedEventId,
     required this.events,
     required this.onEventChanged,
   });
@@ -62,15 +62,20 @@ class StatisticsHeader extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: selectedEvent,
+              value: selectedEventId,
               isExpanded: true,
               icon: const Icon(
                 Icons.keyboard_arrow_down_rounded,
               ),
               dropdownColor: Colors.white,
+
               items: events.map((event) {
+                final eventId = event['id'].toString();
+                final eventTitle =
+                    event['title']?.toString() ?? 'Untitled Event';
+
                 return DropdownMenuItem<String>(
-                  value: event,
+                  value: eventId,
                   child: Row(
                     children: [
                       Icon(
@@ -83,7 +88,7 @@ class StatisticsHeader extends StatelessWidget {
 
                       Expanded(
                         child: Text(
-                          event,
+                          eventTitle,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -91,6 +96,7 @@ class StatisticsHeader extends StatelessWidget {
                   ),
                 );
               }).toList(),
+
               onChanged: onEventChanged,
             ),
           ),

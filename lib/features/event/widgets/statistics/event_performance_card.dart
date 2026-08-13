@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_color.dart';
+import '../../../../core/services/event_service.dart';
 
 class EventPerformanceCard extends StatelessWidget {
   final List<EventPerformanceData> events;
 
-  const EventPerformanceCard({
-    super.key,
-    required this.events,
-  });
+  const EventPerformanceCard({super.key, required this.events});
 
   @override
   Widget build(BuildContext context) {
@@ -16,48 +14,36 @@ class EventPerformanceCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey.shade200,
-        ),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "Event Performance",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 4),
 
           const Text(
             "Compare visitor numbers across your events.",
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 13, color: Colors.grey),
           ),
 
           const SizedBox(height: 20),
 
-          ...events.asMap().entries.map(
-                (entry) {
-              final index = entry.key;
-              final event = entry.value;
+          ...events.asMap().entries.map((entry) {
+            final index = entry.key;
+            final event = entry.value;
 
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: index == events.length - 1 ? 0 : 18,
-                ),
-                child: _EventPerformanceItem(
-                  event: event,
-                ),
-              );
-            },
-          ),
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: index == events.length - 1 ? 0 : 18,
+              ),
+              child: _EventPerformanceItem(event: event),
+            );
+          }),
         ],
       ),
     );
@@ -67,9 +53,7 @@ class EventPerformanceCard extends StatelessWidget {
 class _EventPerformanceItem extends StatelessWidget {
   final EventPerformanceData event;
 
-  const _EventPerformanceItem({
-    required this.event,
-  });
+  const _EventPerformanceItem({required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +94,7 @@ class _EventPerformanceItem extends StatelessWidget {
             value: event.progress,
             minHeight: 9,
             backgroundColor: Colors.grey.shade200,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              AppColor.primary,
-            ),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColor.primary),
           ),
         ),
       ],
