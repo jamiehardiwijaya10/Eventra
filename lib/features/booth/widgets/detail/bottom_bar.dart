@@ -1,121 +1,79 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_color.dart';
 
 class BottomActionBar extends StatelessWidget {
-
-  final bool isBookmarked;
-  final VoidCallback onBookmark;
   final VoidCallback onNavigate;
 
   const BottomActionBar({
     super.key,
-    required this.isBookmarked,
-    required this.onBookmark,
     required this.onNavigate,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-        16,
-        12,
-        16,
-        20,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 1,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(18),
-              onTap: onBookmark,
-              child: Container(
-                height: 54,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  borderRadius:
-                  BorderRadius.circular(18),
-                ),
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(
+          16,
+          10,
+          16,
+          12,
+        ),
 
-                child: Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-                  children: [
-                    Icon(
-                      isBookmarked
-                          ? Icons.bookmark
-                          : Icons.bookmark_border,
-                      color: AppColor.primary,
-                    ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, -3),
+            ),
+          ],
+        ),
 
-                    const SizedBox(width: 8),
+        child: SizedBox(
+          width: double.infinity,
 
-                    const Text(
-                      "Simpan",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+          child: ElevatedButton.icon(
+            onPressed: onNavigate,
+
+            icon: const Icon(
+              Icons.directions,
+              size: 21,
+            ),
+
+            label: const Text(
+              'Rute ke Booth',
+              style: TextStyle(
+                fontSize: 15.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+              AppColor.primary,
+
+              foregroundColor:
+              Colors.white,
+
+              elevation: 0,
+
+              padding:
+              const EdgeInsets.symmetric(
+                vertical: 15,
+              ),
+
+              shape:
+              RoundedRectangleBorder(
+                borderRadius:
+                BorderRadius.circular(12),
               ),
             ),
           ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            flex: 2,
-            child: InkWell(
-              borderRadius:
-              BorderRadius.circular(18),
-              onTap: onNavigate,
-              child: Container(
-                height: 54,
-                decoration: BoxDecoration(
-                  color: AppColor.primary,
-                  borderRadius:
-                  BorderRadius.circular(18),
-                ),
-
-                child: Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.navigation_rounded,
-                      color: Colors.white,
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    const Text(
-                      "Rute ke Booth",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight:
-                        FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

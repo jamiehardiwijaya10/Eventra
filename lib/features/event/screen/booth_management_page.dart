@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import '../../../core/services/event_service.dart';
 
-class BoothManagementPage extends StatefulWidget {
+class BoothManagementsPage extends StatefulWidget {
   final String eventId;
 
-  const BoothManagementPage({
+  const BoothManagementsPage({
     super.key,
     required this.eventId,
   });
 
   @override
-  State<BoothManagementPage> createState() => _BoothManagementPageState();
+  State<BoothManagementsPage> createState() => _BoothManagementsPageState();
 }
 
-class _BoothManagementPageState extends State<BoothManagementPage> {
+class _BoothManagementsPageState extends State<BoothManagementsPage> {
   final EventService _eventService = EventService();
 
   List<Map<String, dynamic>> booths = [];
