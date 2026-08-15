@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Eventra Payment</title>
+
+    <style>
+        * {
+          box-sizing: border-box;
+        }
+
+        body {
+          margin: 0;
+          min-height: 100vh;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: #f7f8fa;
+
+          font-family:
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            Roboto,
+            Arial,
+            sans-serif;
+
+          color: #1f1f1f;
+        }
+
+        .container {
+          width: 100%;
+          max-width: 430px;
+
+          padding: 24px;
+        }
+
+        .card {
+          background: white;
+
+          border-radius: 20px;
+
+          padding: 32px 24px;
+
+          text-align: center;
+
+          box-shadow:
+            0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .icon {
+          width: 72px;
+          height: 72px;
+
+          margin: 0 auto 20px;
+
+          border-radius: 50%;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: #fff3ec;
+
+          font-size: 36px;
+        }
+
+        h1 {
+          margin: 0 0 10px;
+
+          font-size: 24px;
+          font-weight: 800;
+        }
+
+        p {
+          margin: 0;
+
+          color: #777;
+
+          font-size: 14px;
+          line-height: 1.6;
+        }
+
+        .order {
+          margin-top: 20px;
+
+          padding: 14px;
+
+          background: #f7f8fa;
+
+          border-radius: 12px;
+
+          font-size: 13px;
+
+          color: #555;
+
+          word-break: break-all;
+        }
+
+        .order strong {
+          display: block;
+
+          margin-bottom: 5px;
+
+          color: #222;
+        }
+
+        button {
+          width: 100%;
+
+          margin-top: 24px;
+
+          padding: 15px;
+
+          border: none;
+
+          border-radius: 12px;
+
+          background: #ff751f;
+
+          color: white;
+
+          font-size: 15px;
+
+          font-weight: 700;
+
+          cursor: pointer;
+        }
+
+        button:active {
+          transform: scale(0.98);
+        }
+
+        .status {
+          margin-top: 12px;
+
+          min-height: 20px;
+
+          font-size: 13px;
+
+          color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="icon">
+            ✓
+        </div>
+
+        <h1>
+            Payment Completed
+        </h1>
+
+        <p>
+            Your payment process has been completed.
+            Continue to Eventra to see your payment result.
+        </p>
+
+        <div
+                class="order"
+                id="orderBox"
+        >
+            <strong>
+                Order ID
+            </strong>
+
+            <span id="orderId">
+          Loading...
+        </span>
+        </div>
+
+        <button
+                type="button"
+                onclick="continueToEventra()"
+        >
+            Continue to Eventra
+        </button>
+
+        <div
+                class="status"
+                id="status"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // =====================================================
+    // GET ORDER ID
+    // =====================================================
+
+    const params =
+      new URLSearchParams(
+        window.location.search
+      );
+
+    const orderId =
+      params.get("order_id");
+
+
+    // =====================================================
+    // DISPLAY ORDER ID
+    // =====================================================
+
+    const orderElement =
+      document.getElementById("orderId");
+
+    if (orderId) {
+
+      orderElement.textContent =
+        orderId;
+
+    } else {
+
+      orderElement.textContent =
+        "Order ID not found";
+
+    }
+
+
+    // =====================================================
+    // CONTINUE TO EVENTRA
+    // =====================================================
+
+    function continueToEventra() {
+
+      if (!orderId) {
+
+        document.getElementById(
+          "status"
+        ).textContent =
+          "Order ID tidak ditemukan.";
+
+        return;
+      }
+
+
+      const eventraUrl =
+        "eventra://payment-result?order_id=" +
+        encodeURIComponent(orderId);
+
+
+      document.getElementById(
+        "status"
+      ).textContent =
+        "Opening Eventra...";
+
+
+      console.log(
+        "Opening:",
+        eventraUrl
+      );
+
+
+      // ===================================================
+      // OPEN EVENTRA
+      // ===================================================
+
+      window.location.href =
+        eventraUrl;
+
+    }
+
+</script>
+
+</body>
+</html>
+```
