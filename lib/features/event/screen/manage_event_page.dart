@@ -3,9 +3,11 @@ import '../../../core/services/event_service.dart';
 import '../widgets/my/management_menu_card.dart';
 import 'booth_management_page.dart';
 import 'event_settings_page.dart';
-import 'booth_management_page.dart';
+import '../../booth/screen/booth_management_page.dart';
+import '../../booth/screen/booth_management_detail_page.dart';
 import 'registration_requests_page.dart';
 import 'statistics_page.dart';
+import 'ticket_management_page.dart';
 
 class ManageEventPage extends StatefulWidget {
   final String eventId;
@@ -153,6 +155,23 @@ class _ManageEventPageState extends State<ManageEventPage> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => RegistrationRequestsPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: 15),
+
+          ManagementMenuCard(
+            icon: Icons.confirmation_number_outlined,
+            title: "Ticket Management",
+            subtitle: "Create and manage event tickets",
+            onTap: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TicketManagementPage(
                     eventId: widget.eventId,
                   ),
                 ),

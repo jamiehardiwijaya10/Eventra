@@ -112,6 +112,7 @@ class _EventScreenState extends State<EventScreen> {
             context,
             MaterialPageRoute(
               builder: (_) => TicketScreen(
+                eventId: widget.eventId,
                 eventName: _event!['title']?.toString() ?? 'Event',
               ),
             ),
@@ -245,13 +246,16 @@ class _EventScreenState extends State<EventScreen> {
 
                         EventMenu(
                           title: "Tickets",
-                          icon:
-                          Icons.confirmation_number_outlined,
+                          icon: Icons.confirmation_number_outlined,
                           onTap: () {
-                            Navigator.pushNamed(
+                            Navigator.push(
                               context,
-                              AppRoutes.ticket,
-                              arguments: _event!['title']?.toString() ?? 'Event',
+                              MaterialPageRoute(
+                                builder: (_) => TicketScreen(
+                                  eventId: widget.eventId,
+                                  eventName: _event!['title']?.toString() ?? 'Event',
+                                ),
+                              ),
                             );
                           },
                         ),

@@ -40,7 +40,6 @@ class AppRoutes {
   static const mybooth = "/mybooth";
   static const myevent = "/myevent";
   static const statsevent = "/statsevent";
-
   static const ticket = "/ticketsc";
   static const maps = "/maps_screen";
 
@@ -115,10 +114,10 @@ class AppRoutes {
           builder: (_) => BoothPage(),
         );
 
-      case boothdetail:
-        return MaterialPageRoute(
-          builder: (_) => BoothDetailPage(),
-        );
+      // case boothdetail:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BoothDetailPage(),
+      //   );
 
       case profilecostumer:
         return MaterialPageRoute(
@@ -141,10 +140,15 @@ class AppRoutes {
         );
 
       case ticket:
-        final eventName = settings.arguments as String? ?? 'Event';
+        final arguments =
+        settings.arguments as Map<String, dynamic>;
+
+        final eventId = arguments['eventId'] as String;
+        final eventName = arguments['eventName'] as String;
 
         return MaterialPageRoute(
           builder: (_) => TicketScreen(
+            eventId: eventId,
             eventName: eventName,
           ),
         );
