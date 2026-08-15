@@ -8,6 +8,7 @@ import '../../booth/screen/booth_management_detail_page.dart';
 import 'registration_requests_page.dart';
 import 'statistics_page.dart';
 import 'ticket_management_page.dart';
+import 'announcement_page.dart';
 
 class ManageEventPage extends StatefulWidget {
   final String eventId;
@@ -211,7 +212,16 @@ class _ManageEventPageState extends State<ManageEventPage> {
             icon: Icons.campaign_outlined,
             title: "Announcement",
             subtitle: "Send announcements to visitors",
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => AnnouncementPage(
+                    eventId: widget.eventId,
+                  ),
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 15),

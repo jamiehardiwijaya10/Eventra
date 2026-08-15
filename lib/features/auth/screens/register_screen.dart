@@ -62,7 +62,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context,
       ).showSnackBar(const SnackBar(content: Text("Register Success!")));
 
-      Navigator.pushReplacementNamed(context, AppRoutes.onboarding1);
+      await _authService.goToHomeByRole(context);
     } on AuthException catch (e) {
       if (!mounted) return;
 

@@ -32,6 +32,9 @@ class _EventScreenState extends State<EventScreen> {
   final EventService _eventService = EventService();
 
   Map<String, dynamic>? _event;
+  List<Map<String, dynamic>> _announcements = [];
+  bool _isAnnouncementLoading = true;
+
   bool _isLoading = true;
   String? _error;
 
@@ -52,6 +55,28 @@ class _EventScreenState extends State<EventScreen> {
   void initState() {
     super.initState();
     _loadEvent();
+    _loadAnnouncements();
+  }
+
+  Future<void> _loadAnnouncements() async {
+    try {
+      final data = await _eventService.getEventAnnouncements(
+        widget.eventId,
+      );
+
+      if (!mounted) return;
+
+      setState(() {
+        _announcements = data;
+        _isAnnouncementLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isAnnouncementLoading = false;
+      });
+    }
   }
 
   Future<void> _loadEvent() async {
@@ -179,6 +204,65 @@ class _EventScreenState extends State<EventScreen> {
                       longitude: (_event!['longitude'] as num).toDouble(),
                     ),
                     const SizedBox(height: 25),
+                    if (_isAnnouncementLoading)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else if (_announcements.isNotEmpty)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Announcements",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const SizedBox(height: 15),
+
+                          ..._announcements.map(
+                            (announcement) {
+                              return Container(
+                                width: double.infinity,
+                                margin: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.withOpacity(.08),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      announcement['title']?.toString() ?? '-',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    const SizedBox(height: 8),
+
+                                    Text(
+                                      announcement['message']?.toString() ?? '-',
+                                      style: TextStyle(
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+
+                          const SizedBox(height: 10),
+                        ],
+                      ),
 
                     AttendeesSection(
                       totalMembers: 15782,

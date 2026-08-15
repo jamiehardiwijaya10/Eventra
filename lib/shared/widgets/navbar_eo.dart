@@ -49,7 +49,10 @@ class NavBar extends StatelessWidget {
               break;
 
             case 2:
-              // Statistics belum dibuat
+              Navigator.pushReplacementNamed(
+                context,
+                AppRoutes.statsevent,
+              );
               break;
 
             case 3:

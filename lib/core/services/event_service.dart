@@ -160,6 +160,7 @@ class EventService {
         .from('booths')
         .select()
         .eq('event_id', eventId)
+        .eq('status', 'approved')
         .order('created_at', ascending: false);
 
     return List<Map<String, dynamic>>.from(response);
@@ -285,5 +286,29 @@ class EventService {
       'rejectedBooth': rejectedBooth,
       'visitorCount': visitorCount,
     };
+  }
+
+  Future<List<Map<String, dynamic>>> getEventAnnouncements(
+    String eventId,
+  ) async {
+    final response = await _client
+        .from('announcements')
+        .select()
+        .eq('event_id', eventId)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<void> createAnnouncement({
+    required String eventId,
+    required String title,
+    required String message,
+  }) async {
+    await _client.from('announcements').insert({
+      'event_id': eventId,
+      'title': title,
+      'message': message,
+    });
   }
 }

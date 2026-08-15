@@ -131,7 +131,9 @@ class AppRoutes {
 
       case myevent:
         return MaterialPageRoute(
-          builder: (_) => MyEventPage(),
+          builder: (_) => MyEventPage(
+            focusSection: settings.arguments as String?,
+          ),
         );
 
       case statsevent:
