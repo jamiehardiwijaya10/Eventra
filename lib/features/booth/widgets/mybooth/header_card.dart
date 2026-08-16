@@ -48,7 +48,17 @@ class BoothHeaderCard extends StatelessWidget {
 
           CircleAvatar(
             radius: 42,
-            backgroundImage: AssetImage(booth.image),
+            backgroundColor: Colors.grey.shade200,
+            backgroundImage: booth.image.isNotEmpty
+                ? NetworkImage(booth.image)
+                : null,
+            child: booth.image.isEmpty
+                ? const Icon(
+                    Icons.storefront,
+                    size: 40,
+                    color: Colors.grey,
+                  )
+                : null,
           ),
 
           const SizedBox(height: 18),

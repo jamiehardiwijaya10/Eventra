@@ -41,11 +41,9 @@ class BoothStatCard extends StatelessWidget {
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Container(
             width: 42,
             height: 42,
@@ -80,6 +78,35 @@ class BoothStatCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class BoothStatistics extends StatelessWidget {
+  final List<BoothStatModel> stats;
+
+  const BoothStatistics({
+    super.key,
+    required this.stats,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: stats.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 14,
+        mainAxisSpacing: 14,
+        childAspectRatio: 1.35,
+      ),
+      itemBuilder: (context, index) {
+        return BoothStatCard(
+          stat: stats[index],
+        );
+      },
     );
   }
 }

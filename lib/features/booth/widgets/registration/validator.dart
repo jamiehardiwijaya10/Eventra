@@ -56,10 +56,6 @@ class RegistrationValidator {
     return null;
   }
 
-  // ==========================================================
-  // STEP 3
-  // ==========================================================
-
   static String? validateUpload({
     Uint8List? logo,
     Uint8List? banner,
