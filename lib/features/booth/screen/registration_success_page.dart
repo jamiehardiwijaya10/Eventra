@@ -1,3 +1,4 @@
+import 'package:eventra/app/routes.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_color.dart';
 
@@ -132,9 +133,9 @@ class RegistrationSuccessPage extends StatelessWidget {
 
                   onPressed: () {
 
-                    Navigator.popUntil(
+                    Navigator.pushReplacementNamed(
                       context,
-                          (route) => route.isFirst,
+                      AppRoutes.homebooth,
                     );
 
                   },

@@ -26,7 +26,7 @@ class NavBar extends StatelessWidget {
       case 1:
          Navigator.pushReplacementNamed(
                 context,
-                AppRoutes.eventpage,
+                AppRoutes.registerEventBooth,
               );
         break;
 
@@ -44,15 +44,6 @@ class NavBar extends StatelessWidget {
               );
         break;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text("$page belum tersedia"),
-        backgroundColor: AppColor.primary,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 
   Widget _buildItem({

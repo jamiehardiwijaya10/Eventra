@@ -7,6 +7,11 @@ import '../widgets/event_card.dart';
 import '../widgets/event_card2.dart';
 import 'package:eventra/features/booth/screen/register_event_page.dart';
 import '../../../core/services/event_service.dart';
+import '../../../core/services/profile_service.dart';
+import '../../booth/widgets/event_card/features_event_card.dart';
+import '../../booth/widgets/event_card/event_list_card.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../app/routes.dart';
 
 class HomeScreenBooth extends StatefulWidget {
   const HomeScreenBooth({super.key});
@@ -16,9 +21,41 @@ class HomeScreenBooth extends StatefulWidget {
 }
 
 class _HomeScreenBoothState extends State<HomeScreenBooth> {
-  int selectedCategory = 0;
+  String? selectedCategoryId;
+  List<Map<String, dynamic>> _categories = [];
+  bool _isLoadingCategories = true;
+  final ProfileService _profileService = ProfileService();
+  Map<String, dynamic>? _profile;
 
-    String _formatDateRange(dynamic startValue, dynamic endValue) {
+  IconData _categoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'design':
+        return Icons.palette;
+
+      case 'food':
+        return Icons.restaurant;
+
+      case 'sport':
+        return Icons.sports_soccer;
+
+      case 'music':
+        return Icons.music_note;
+
+      case 'festival':
+        return Icons.celebration;
+
+      case 'market':
+        return Icons.storefront;
+
+      case 'expo':
+        return Icons.business;
+
+      default:
+        return Icons.category;
+    }
+  }
+
+  String _formatDateRange(dynamic startValue, dynamic endValue) {
     if (startValue == null || startValue.toString().isEmpty) {
       return '';
     }
@@ -74,6 +111,55 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
   void initState() {
     super.initState();
     _loadEvents();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final response = await Supabase.instance.client
+          .from('categories')
+          .select('id, name')
+          .order('name');
+
+      if (!mounted) return;
+
+      setState(() {
+        _categories = List<Map<String, dynamic>>.from(response);
+        _isLoadingCategories = false;
+      });
+    } catch (e) {
+      debugPrint("CATEGORY ERROR: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        _isLoadingCategories = false;
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> get _filteredEvents {
+    if (selectedCategoryId == null) {
+      return _events;
+    }
+
+    return _events.where((event) {
+      return event['category_id']?.toString() == selectedCategoryId;
+    }).toList();
+  }
+
+  Future<void> _loadProfile() async {
+    try {
+      final profile = await _profileService.getProfile();
+
+      if (!mounted) return;
+
+      setState(() {
+        _profile = profile;
+      });
+    } catch (e) {
+      debugPrint("HOME PROFILE ERROR: $e");
+    }
   }
 
   Future<void> _loadEvents() async {
@@ -101,7 +187,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child:SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Stack(
             children: [
               Positioned.fill(
@@ -114,21 +200,16 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [
-                              AppColor.primary,
-                              AppColor.secondary,
-                            ],
+                            colors: [AppColor.primary, AppColor.secondary],
                           ),
                         ),
                       ),
                     ),
                     Expanded(
                       flex: 2,
-                      child: Container(
-                        color: Colors.white.withOpacity(0.98),
-                      ),
+                      child: Container(color: Colors.white.withOpacity(0.98)),
                     ),
-                  ]
+                  ],
                 ),
               ),
 
@@ -145,15 +226,26 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                       children: [
                         Row(
                           children: [
-                            const CircleAvatar(
+                            CircleAvatar(
                               radius: 22,
-                              backgroundImage: AssetImage(
-                                "assets/images/Remielle Dan.jpg",
-                              ),
+                              backgroundImage:
+                                  _profile?['avatar_url'] != null &&
+                                      _profile!['avatar_url']
+                                          .toString()
+                                          .isNotEmpty
+                                  ? NetworkImage(
+                                      _profile!['avatar_url'].toString(),
+                                    )
+                                  : null,
+                              child:
+                                  _profile?['avatar_url'] == null ||
+                                      _profile!['avatar_url'].toString().isEmpty
+                                  ? const Icon(Icons.person)
+                                  : null,
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              "Hi! Welcome\nRemielle",
+                              "Hi! Welcome\n${_profile?['brand_name']?.toString() ?? 'Booth Owner'}",
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Colors.white,
@@ -164,7 +256,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                         ),
 
                         Text(
-                          "Current Location\nBandung, IDN",
+                          "Current Location\nYour Location",
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             color: Colors.white,
@@ -200,8 +292,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             "Popular Events 🔥",
@@ -215,12 +306,15 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                           const SizedBox(width: 100),
 
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.registerEventBooth,
+                            );
+                            },
                             child: const Text(
                               "VIEW ALL",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                         ],
@@ -236,7 +330,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                         children: [
                           SizedBox(width: 10),
 
-                           if (_isLoadingEvents)
+                          if (_isLoadingEvents)
                             const Center(
                               child: CircularProgressIndicator(
                                 color: Colors.white,
@@ -256,17 +350,22 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                             ..._events.take(5).map((event) {
                               return Padding(
                                 padding: const EdgeInsets.only(right: 15),
-                                  // child: FeaturedEventCard(
-                                  //   eventId: event['id'].toString(),
-                                  //   image: event['banner']?.toString() ?? '',
-                                  //   title: event['title']?.toString() ?? 'Untitled Event',
-                                  //   startDate: _formatDate(event['start_date']?.toString()),
-                                  //   endDate: _formatDate(event['end_date']?.toString()),
-                                  //   location: event['location']?.toString() ?? '',
-                                  // ),
+                                child: FeaturedBoothEventCard(
+                                  eventId: event['id'].toString(),
+                                  image: event['banner']?.toString() ?? '',
+                                  title:
+                                      event['title']?.toString() ??
+                                      'Untitled Event',
+                                  date: _formatDateRange(
+                                    event['start_date'],
+                                    event['end_date'],
+                                  ),
+                                  location:
+                                      event['location']?.toString() ?? '-',
+                                ),
                               );
                             }),
-                        
+
                           SizedBox(width: 20),
                         ],
                       ),
@@ -275,8 +374,7 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                     const SizedBox(height: 15),
 
                     Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Choose by Category ✨",
@@ -287,12 +385,15 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                         ),
 
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.registerEventBooth,
+                            );
+                          },
                           child: const Text(
                             "VIEW ALL",
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
+                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ],
@@ -306,80 +407,103 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
                       clipBehavior: Clip.none,
                       child: Row(
                         children: [
-                          CategoryChip(
-                            icon: Icons.palette,
-                            title: "Design",
-                            selected: selectedCategory == 0,
-                            onTap: () {
-                              setState(() {
-                                selectedCategory = 0;
-                              });
-                            },
-                          ),
+                          if (_isLoadingCategories)
+                            const SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: CircularProgressIndicator(),
+                            )
+                          else
+                            ..._categories.asMap().entries.map((entry) {
+                              final category = entry.value;
 
-                          const SizedBox(width: 12),
+                              final categoryId = category['id']?.toString();
 
-                          CategoryChip(
-                            icon: Icons.restaurant,
-                            title: "Food",
-                            selected: selectedCategory == 1,
-                            onTap: () {
-                              setState(() {
-                                selectedCategory = 1;
-                              });
-                            },
-                          ),
+                              final categoryName =
+                                  category['name']?.toString() ?? '';
 
-                          const SizedBox(width: 12),
-
-                          CategoryChip(
-                            icon: Icons.sports_soccer,
-                            title: "Sport",
-                            selected: selectedCategory == 2,
-                            onTap: () {
-                              setState(() {
-                                selectedCategory = 2;
-                              });
-                            },
-                          ),
-
-                          const SizedBox(width: 12),
-
-                          CategoryChip(
-                            icon: Icons.music_note,
-                            title: "Music",
-                            selected: selectedCategory == 3,
-                            onTap: () {
-                              setState(() {
-                                selectedCategory = 3;
-                              });
-                            },
-                          ),
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 12),
+                                child: CategoryChip(
+                                  icon: _categoryIcon(categoryName),
+                                  title: categoryName,
+                                  selected: selectedCategoryId == categoryId,
+                                  onTap: () {
+                                    setState(() {
+                                      if (selectedCategoryId == categoryId) {
+                                        selectedCategoryId = null;
+                                      } else {
+                                        selectedCategoryId = categoryId;
+                                      }
+                                    });
+                                  },
+                                ),
+                              );
+                            }),
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 25),
 
-                    //  if (_isLoadingEvents)
-                    //   const Center(child: CircularProgressIndicator())
-                    // else if (_events.isEmpty)
-                    //   const Text("Belum ada event")
-                    // else
-                    //   ..._events.map((event) {
-                    //     return EventListCard(
-                    //       eventId: event['id'].toString(),
-                    //       image: event['banner'] ?? '',
-                    //       title: event['title'] ?? 'Untitled Event',
-                    //       date: event['start_date'] ?? '',
-                    //       location: event['location'] ?? '',
-                    //       price: 'Free',
-                    //     );
-                    //   }),
-                  ]
+                    if (_filteredEvents.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.event_busy_outlined,
+                              size: 42,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              "No events found",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "There are no events in this category.",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ..._filteredEvents.map((event) {
+                        final startDate = event['start_date']?.toString() ?? '';
+                        final endDate = event['end_date']?.toString() ?? '';
+
+                        return BoothEventListCard(
+                          eventId: event['id'].toString(),
+                          image: event['banner']?.toString() ?? '',
+                          title: event['title']?.toString() ?? 'Untitled Event',
+                          date: _formatDateRange(
+                            event['start_date'],
+                            event['end_date'],
+                          ),
+                          location: event['location']?.toString() ?? '-',
+                          maximumBooth:
+                              int.tryParse(
+                                event['maximum_booth']?.toString() ?? '0',
+                              ) ??
+                              0,
+                        );
+                      }),
+                  ],
                 ),
               ),
-            ]
+            ],
           ),
         ),
       ),
@@ -393,25 +517,14 @@ class _HomeScreenBoothState extends State<HomeScreenBooth> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const RegisterEventPage(),
-              ),
+              MaterialPageRoute(builder: (_) => const RegisterEventPage()),
             );
           },
-          child: const Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 34,
-          ),
+          child: const Icon(Icons.add, color: Colors.white, size: 34),
         ),
       ),
 
-      floatingActionButtonLocation:
-      FloatingActionButtonLocation.centerDocked,
-
-      bottomNavigationBar: const NavBar(
-        currentIndex: 0,
-      ),
+      bottomNavigationBar: const NavBar(currentIndex: 0),
     );
   }
 }

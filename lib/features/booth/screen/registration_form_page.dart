@@ -50,31 +50,57 @@ class _RegistrationFormPageState
   Uint8List? bannerImage;
   Uint8List? boothImage;
 
-  final List<ProductSelectorModel> products = [
+  List<ProductSelectorModel> products = [];
 
-    ProductSelectorModel(
-      id: "1",
-      name: "Cheeseburger",
-      price: "Rp25.000",
-    ),
-
-    ProductSelectorModel(
-      id: "2",
-      name: "French Fries",
-      price: "Rp15.000",
-    ),
-
-    ProductSelectorModel(
-      id: "3",
-      name: "Cola",
-      price: "Rp8.000",
-    ),
-
-  ];
+  bool isLoadingProducts = true;
 
   @override
   void initState() {
     super.initState();
+    loadMyProducts();
+  }
+
+  Future<void> loadMyProducts() async {
+    try {
+      final data = await _boothService.getMyProducts();
+
+      if (!mounted) return;
+
+      setState(() {
+        products = data.map((product) {
+          return ProductSelectorModel(
+            id: product['id'].toString(),
+            name: product['name']?.toString() ?? '-',
+            category: product['category']?.toString() ?? '-',
+            price: product['price']?.toString() ?? '0',
+            description:
+                product['description']?.toString() ?? '',
+            image: product['image']?.toString() ?? '',
+            availableStock:
+                int.tryParse(
+                      product['available_stock']
+                              ?.toString() ??
+                          '0',
+                    ) ??
+                    0,
+            isAvailable:
+                product['is_available'] == true,
+          );
+        }).toList();
+
+        isLoadingProducts = false;
+      });
+    } catch (e) {
+      debugPrint("LOAD PRODUCTS ERROR: $e");
+
+      if (!mounted) return;
+
+      setState(() {
+        isLoadingProducts = false;
+      });
+
+      showError("Gagal memuat products");
+    }
   }
 
   @override
@@ -190,6 +216,18 @@ class _RegistrationFormPageState
     );
   }
 
+    Future<String?> uploadRegistrationImage(
+    Uint8List? image,
+    String type,
+  ) async {
+    if (image == null) return null;
+
+    return await _boothService.uploadBoothImage(
+      type: type,
+      image: image,
+    );
+  }
+
   Future<void> submitRegistration() async {
     if (!agree) return;
 
@@ -198,10 +236,56 @@ class _RegistrationFormPageState
     });
 
     try {
-      await _boothService.createBooth(
+      final logoUrl = await uploadRegistrationImage(
+        logoImage,
+        'logo',
+      );
+
+      final bannerUrl = await uploadRegistrationImage(
+        bannerImage,
+        'banner',
+      );
+
+      final boothPhotoUrl = await uploadRegistrationImage(
+        boothImage,
+        'booth_photo',
+      );
+
+      final booth = await _boothService.createBooth(
         eventId: widget.eventId,
         name: boothNameController.text.trim(),
         description: descriptionController.text.trim(),
+        category: selectedCategory!,
+        businessType: selectedBusinessType!,
+        ownerName: ownerNameController.text.trim(),
+        phone: phoneController.text.trim(),
+        email: emailController.text.trim(),
+        instagram: instagramController.text.trim(),
+        logo: logoUrl,
+        banner: bannerUrl,
+        boothPhoto: boothPhotoUrl,
+      );
+
+      final boothId = booth['id'].toString();
+
+      final selectedProducts = products
+          .where((product) => product.selected)
+          .map((product) {
+        return ProductCopyData(
+          name: product.name,
+          category: product.category,
+          description: product.description,
+          price:
+              num.tryParse(product.price) ?? 0,
+          availableStock: product.availableStock,
+          image: product.image,
+          isAvailable: product.isAvailable,
+        );
+      }).toList();
+
+      await _boothService.copyProductsToBooth(
+        boothId: boothId,
+        products: selectedProducts,
       );
 
       if (!mounted) return;
@@ -217,6 +301,8 @@ class _RegistrationFormPageState
         ),
       );
     } catch (e) {
+      debugPrint("REGISTER BOOTH ERROR: $e");
+
       if (!mounted) return;
 
       setState(() {
@@ -294,7 +380,16 @@ class _RegistrationFormPageState
     );
   }
 
-  Widget _boothStep() {
+ Widget _boothStep() {
+    if (isLoadingProducts) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(30),
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return BoothInformationStep(
       boothNameController: boothNameController,
       descriptionController: descriptionController,
@@ -317,16 +412,18 @@ class _RegistrationFormPageState
       products: products,
 
       onAddProduct: () async {
-        final product = await Navigator.push<ProductSelectorModel>(
+        final added = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => const AddProductPage(),
           ),
         );
 
-        if (product != null) {
+        if (added == null) return;
+
+        if (added is ProductSelectorModel) {
           setState(() {
-            products.add(product);
+            products.add(added);
           });
         }
       },

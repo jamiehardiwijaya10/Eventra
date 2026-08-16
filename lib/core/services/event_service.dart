@@ -207,16 +207,6 @@ class EventService {
         .eq('id', eventId);
   }
 
-  Future<List<Map<String, dynamic>>> getAvailableEvents() async {
-    final response = await _client
-        .from('events')
-        .select()
-        .eq('status', 'published')
-        .order('start_date', ascending: true);
-
-    return List<Map<String, dynamic>>.from(response);
-  }
-
   Future<List<Map<String, dynamic>>> getPendingBooths(
     String eventId,
   ) async {
@@ -310,5 +300,101 @@ class EventService {
       'title': title,
       'message': message,
     });
+  }
+
+  Future<List<Map<String, dynamic>>> getBoothOwnerEventHistory() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    final response = await _client
+        .from('booths')
+        .select('''
+          id,
+          name,
+          event_id,
+          events (
+            id,
+            title,
+            banner,
+            start_date,
+            end_date,
+            venue_name,
+            location
+          )
+        ''')
+        .eq('owner_id', user.id)
+        .eq('status', 'approved')
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> getEventCategories() async { 
+    final response = await _client 
+    .from('categories') .select('id, name') 
+    .order('name', ascending: true); 
+    
+    return List<Map<String, dynamic>>.from(response);
+    } 
+    
+  Future<List<Map<String, dynamic>>> getAvailableEvents() async {
+    final now = DateTime.now().toIso8601String();
+
+    final response = await _client
+        .from('events')
+        .select('''
+          *,
+          categories (
+            id,
+            name
+          )
+        ''')
+        .eq('status', 'published')
+        .gte('end_date', now)
+        .order('start_date', ascending: true);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> getMyBooths() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    final response = await _client
+        .from('booths')
+        .select('''
+          id,
+          event_id,
+          owner_id,
+          name,
+          description,
+          status,
+          queue_estimate,
+          opening_hours,
+          closing_hours,
+          banner,
+          latitude,
+          longitude,
+          created_at,
+          events (
+            id,
+            title,
+            banner,
+            start_date,
+            end_date,
+            venue_name,
+            location
+          )
+        ''')
+        .eq('owner_id', user.id)
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }

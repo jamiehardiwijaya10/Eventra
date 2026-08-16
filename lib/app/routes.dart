@@ -19,6 +19,7 @@ import '../features/booth/screen/my_booth_page.dart';
 import '../features/event/screen/my_event_page.dart';
 import '../features/event/screen/event_statistics.dart';
 import '../features/maps/screen/maps_screen.dart';
+import '../features/booth/screen/register_event_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -42,6 +43,7 @@ class AppRoutes {
   static const statsevent = "/statsevent";
   static const ticket = "/ticketsc";
   static const maps = "/maps_screen";
+  static const registerEventBooth = "/register_event_booth";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -154,6 +156,11 @@ class AppRoutes {
         return MaterialPageRoute(
           builder: (_) => MapScreen(),
         );
+
+        case registerEventBooth:
+          return MaterialPageRoute(
+            builder: (_) => const RegisterEventPage(),
+          );
 
       default:
         return MaterialPageRoute(
