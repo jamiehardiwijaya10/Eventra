@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../app/routes.dart';
@@ -143,6 +144,84 @@ Future<void> createProfile({
       default:
         throw Exception("Role tidak dikenali");
     }
+  }
+
+  Future<Map<String, dynamic>> getMyProfile() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    final response = await _client
+        .from('profiles')
+        .select('''
+          *,
+          roles(name)
+        ''')
+        .eq('id', user.id)
+        .single();
+
+    return response;
+  }
+
+  Future<void> updateProfile({
+    required String firstName,
+    required String lastName,
+    required String phone,
+    String? avatarUrl,
+    String? companyName,
+    String? teamLeader,
+    String? officialWebsite,
+    String? brandName,
+  }) async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    await _client
+        .from('profiles')
+        .update({
+          'first_name': firstName,
+          'last_name': lastName,
+          'phone': phone,
+          'avatar_url': avatarUrl,
+          'company_name': companyName,
+          'team_leader': teamLeader,
+          'official_website': officialWebsite,
+          'brand_name': brandName,
+        })
+        .eq('id', user.id);
+  }
+
+  Future<String> uploadProfileImage({
+    required Uint8List bytes,
+    required String fileExtension,
+  }) async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+
+    final path =
+        'avatars/${user.id}_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
+
+    await _client.storage
+        .from('profile_avatars')
+        .uploadBinary(
+          path,
+          bytes,
+          fileOptions: const FileOptions(
+            upsert: false,
+          ),
+        );
+
+    return _client.storage
+        .from('profile_avatars')
+        .getPublicUrl(path);
   }
 
   User? get currentUser => _client.auth.currentUser;
