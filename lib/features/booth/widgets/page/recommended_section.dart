@@ -5,10 +5,12 @@ import 'booth_card.dart';
 class RecommendedBoothSection extends StatelessWidget {
 
   final List<BoothModel> booths;
+  final void Function(BoothModel booth)? onBoothTap;
 
   const RecommendedBoothSection({
     super.key,
     required this.booths,
+    this.onBoothTap,
   });
 
 

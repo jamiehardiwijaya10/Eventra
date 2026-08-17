@@ -114,11 +114,21 @@ class EventService {
   ) async {
     final response = await _client
         .from('events')
-        .select()
+        .select('''
+          *,
+          profiles!events_eo_id_fkey (
+            id,
+            first_name,
+            last_name,
+            avatar_url,
+            company_name,
+            brand_name
+          )
+        ''')
         .eq('id', eventId)
         .single();
 
-    return response;
+    return Map<String, dynamic>.from(response);
   }
 
   Future<List<Map<String, dynamic>>> getMyEvents() async {
@@ -367,34 +377,186 @@ class EventService {
     }
 
     final response = await _client
-        .from('booths')
-        .select('''
+      .from('booths')
+      .select('''
+        id,
+        event_id,
+        owner_id,
+        name,
+        description,
+        category,
+        business_type,
+        owner_name,
+        phone,
+        email,
+        instagram,
+        status,
+        queue_status,
+        stock_status,
+        opening_hours,
+        closing_hours,
+        logo,
+        banner,
+        booth_photo,
+        latitude,
+        longitude,
+        created_at,
+        events (
           id,
-          event_id,
-          owner_id,
-          name,
-          description,
-          status,
-          queue_estimate,
-          opening_hours,
-          closing_hours,
-          banner,
-          latitude,
-          longitude,
-          created_at,
-          events (
-            id,
-            title,
-            banner,
-            start_date,
-            end_date,
-            venue_name,
-            location
-          )
-        ''')
-        .eq('owner_id', user.id)
-        .order('created_at', ascending: false);
+          title,
+          start_date,
+          end_date,
+          location,
+          venue_name
+        )
+      ''')
+      .eq('owner_id', user.id)
+      .order('created_at', ascending: false);
 
     return List<Map<String, dynamic>>.from(response);
   }
+
+  Future<List<Map<String, dynamic>>> getCustomerEventHistory() async {
+    final user = _client.auth.currentUser;
+
+    if (user == null) {
+      throw Exception("User belum login");
+    }
+    
+    final now = DateTime.now().toIso8601String();
+
+    final response = await _client
+        .from('events')
+        .select('''
+          id,
+          title,
+          banner,
+          start_date,
+          end_date,
+          location,
+          venue_name
+        ''')
+        .eq('status', 'published')
+        .lt('end_date', now)
+        .order('end_date', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
+  }
+
+  Future<Map<String, dynamic>> getEventCustomerStats(
+    String eventId,
+  ) async {
+    final tickets = await _client
+        .from('ticket_types')
+        .select('price, quota, sold')
+        .eq('event_id', eventId)
+        .eq('status', 'on_sale');
+
+    num lowestPrice = 0;
+    int ticketsLeft = 0;
+
+    if (tickets.isNotEmpty) {
+      final prices = tickets
+          .map((ticket) => (ticket['price'] as num?) ?? 0)
+          .toList();
+
+      lowestPrice = prices.reduce(
+        (a, b) => a < b ? a : b,
+      );
+
+      for (final ticket in tickets) {
+        final quota = (ticket['quota'] as num?)?.toInt() ?? 0;
+        final sold = (ticket['sold'] as num?)?.toInt() ?? 0;
+
+        final remaining = quota - sold;
+
+        if (remaining > 0) {
+          ticketsLeft += remaining;
+        }
+      }
+    }
+
+    final orders = await _client
+        .from('orders')
+        .select('user_id')
+        .eq('event_id', eventId)
+        .inFilter(
+          'payment_status',
+          ['settlement', 'capture'],
+        );
+
+    final joinedUsers = <String>{};
+
+    for (final order in orders) {
+      final userId = order['user_id']?.toString();
+
+      if (userId != null && userId.isNotEmpty) {
+        joinedUsers.add(userId);
+      }
+    }
+
+    return {
+      'price': lowestPrice,
+      'joined': joinedUsers.length,
+      'ticketsLeft': ticketsLeft,
+    };
+  }
+
+Future<List<Map<String, dynamic>>> getMyPurchasedEvents() async {
+  final user = _client.auth.currentUser;
+
+  if (user == null) {
+    throw Exception("User belum login");
+  }
+
+  final response = await _client
+      .from('orders')
+      .select('''
+        event_id,
+        payment_status,
+        events (
+          id,
+          eo_id,
+          category_id,
+          title,
+          description,
+          banner,
+          location,
+          latitude,
+          longitude,
+          status,
+          start_date,
+          end_date,
+          max_capacity,
+          venue_name,
+          event_type,
+          opening_time,
+          closing_time,
+          registration_deadline,
+          registration_fee,
+          maximum_booth,
+          visitor_count,
+          logo
+        )
+      ''')
+      .eq('user_id', user.id)
+      .eq('payment_status', 'paid');
+
+  final Map<String, Map<String, dynamic>> uniqueEvents = {};
+
+  for (final order in response) {
+    final event = order['events'];
+
+    if (event is Map<String, dynamic>) {
+      final eventId = event['id']?.toString();
+
+      if (eventId != null && eventId.isNotEmpty) {
+        uniqueEvents[eventId] =
+            Map<String, dynamic>.from(event);
+      }
+    }
+  }
+
+  return uniqueEvents.values.toList();
+}
 }

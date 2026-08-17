@@ -58,12 +58,24 @@ class EventHorizontalCard extends StatelessWidget {
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(20),
               ),
-              child: Image.asset(
-                event.image,
-                height: 130,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+              child: Image.network(
+                      event.image,
+                      height: 130,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) {
+                        return Container(
+                          height: 130,
+                          width: double.infinity,
+                          color: Colors.grey.shade200,
+                          child: const Icon(
+                            Icons.image_outlined,
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                        );
+                      },
+                    )
             ),
 
             Padding(

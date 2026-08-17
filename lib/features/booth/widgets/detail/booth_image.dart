@@ -47,7 +47,7 @@ class _BoothImageCarouselState
             });
           },
           itemBuilder: (context,index){
-            return Image.asset(
+            return Image.network(
               widget.images[index],
               fit: BoxFit.cover,
             );

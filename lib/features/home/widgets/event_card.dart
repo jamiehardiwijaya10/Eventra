@@ -132,7 +132,7 @@ class FeaturedEventCard extends StatelessWidget {
 
             Row(
               children: [
-                Image.asset(
+                Image.network(
                   "assets/images/Member A.png",
                   height: 22,
                   fit: BoxFit.contain,

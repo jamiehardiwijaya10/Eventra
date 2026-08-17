@@ -5,12 +5,13 @@ import 'booth_card.dart';
 class PopularBoothSection extends StatelessWidget {
 
   final List<BoothModel> booths;
+  final void Function(BoothModel booth)? onBoothTap;
 
   const PopularBoothSection({
-    super.key,
-    required this.booths,
-  });
-
+  super.key,
+  required this.booths,
+  this.onBoothTap,
+});
 
   @override
   Widget build(BuildContext context) {

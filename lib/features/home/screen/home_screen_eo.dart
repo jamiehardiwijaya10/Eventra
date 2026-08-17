@@ -322,7 +322,7 @@ class _HomeScreenEoState extends State<HomeScreenEo> {
                         children: [
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.asset(
+                            child: Image.network(
                               "assets/images/Add Event Pic.png",
                               height: 210,
                               fit: BoxFit.cover,

@@ -145,40 +145,41 @@ class BoothService {
     }
 
     final response = await _client
-        .from('booths')
-        .select('''
+      .from('booths')
+      .select('''
+        id,
+        event_id,
+        owner_id,
+        name,
+        description,
+        category,
+        business_type,
+        owner_name,
+        phone,
+        email,
+        instagram,
+        status,
+        queue_status,
+        stock_status,
+        opening_hours,
+        closing_hours,
+        logo,
+        banner,
+        booth_photo,
+        latitude,
+        longitude,
+        created_at,
+        events (
           id,
-          event_id,
-          owner_id,
-          name,
-          description,
-          category,
-          business_type,
-          owner_name,
-          phone,
-          email,
-          instagram,
-          status,
-          queue_estimate,
-          opening_hours,
-          closing_hours,
-          logo,
-          banner,
-          booth_photo,
-          latitude,
-          longitude,
-          created_at,
-          events (
-            id,
-            title,
-            start_date,
-            end_date,
-            location,
-            venue_name
-          )
-        ''')
-        .eq('owner_id', user.id)
-        .order('created_at', ascending: false);
+          title,
+          start_date,
+          end_date,
+          location,
+          venue_name
+        )
+      ''')
+      .eq('owner_id', user.id)
+      .order('created_at', ascending: false);
 
     return List<Map<String, dynamic>>.from(response);
   }
@@ -197,13 +198,17 @@ class BoothService {
         .from('products')
         .select('''
           id,
+          booth_id,
+          owner_id,
           name,
           category,
           description,
           price,
           available_stock,
           image,
-          is_available
+          is_available,
+          stock_status,
+          created_at
         ''')
         .eq('booth_id', boothId)
         .order('created_at', ascending: false);
@@ -369,5 +374,43 @@ class BoothService {
         .single();
 
     return Map<String, dynamic>.from(response);
+  }
+
+  Future<List<Map<String, dynamic>>> getCustomerBooths() async {
+    final response = await _client
+        .from('booths')
+        .select('''
+          id,
+          event_id,
+          owner_id,
+          name,
+          description,
+          category,
+          business_type,
+          owner_name,
+          status,
+          queue_status,
+          stock_status,
+          opening_hours,
+          closing_hours,
+          logo,
+          banner,
+          booth_photo,
+          latitude,
+          longitude,
+          created_at,
+          events (
+            id,
+            title,
+            start_date,
+            end_date,
+            location,
+            venue_name
+          )
+        ''')
+        .eq('status', 'approved')
+        .order('created_at', ascending: false);
+
+    return List<Map<String, dynamic>>.from(response);
   }
 }

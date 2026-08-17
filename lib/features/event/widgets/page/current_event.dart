@@ -48,12 +48,24 @@ class CurrentEventCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(
               top: Radius.circular(24),
             ),
-            child: Image.asset(
+            child: Image.network(
               image,
               height: 170,
               width: double.infinity,
               fit: BoxFit.cover,
-            ),
+              errorBuilder: (_, __, ___) {
+                return Container(
+                  height: 170,
+                  width: double.infinity,
+                  color: Colors.grey.shade200,
+                  child: const Icon(
+                    Icons.image_outlined,
+                    color: Colors.grey,
+                    size: 50,
+                  ),
+                );
+              },
+            )
           ),
 
           Padding(

@@ -34,17 +34,81 @@ class _EditBoothPageState extends State<EditBoothPage> {
   String? selectedCategory;
   String? selectedBusinessType;
 
+  TimeOfDay? openingTime;
+  TimeOfDay? closingTime;
+
   Uint8List? logoImage;
   Uint8List? bannerImage;
   Uint8List? boothPhotoImage;
 
   bool isSaving = false;
 
+  Future<void> pickOpeningTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime:
+          openingTime ?? const TimeOfDay(hour: 8, minute: 0),
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      openingTime = picked;
+    });
+  }
+
+  Future<void> pickClosingTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime:
+          closingTime ?? const TimeOfDay(hour: 17, minute: 0),
+    );
+
+    if (picked == null) return;
+
+    setState(() {
+      closingTime = picked;
+    });
+  }
+
+  String _formatTimeForDatabase(TimeOfDay time) {
+    final hour =
+        time.hour.toString().padLeft(2, '0');
+
+    final minute =
+        time.minute.toString().padLeft(2, '0');
+
+    return '$hour:$minute:00';
+  }
+
   @override
   void initState() {
     super.initState();
 
     final booth = widget.booth;
+
+    final opening =
+        widget.booth['opening_hours']?.toString();
+    final closing =
+        widget.booth['closing_hours']?.toString();
+    if (opening != null) {
+      final parts = opening.split(':');
+      if (parts.length >= 2) {
+        openingTime = TimeOfDay(
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
+      }
+    }
+    if (closing != null) {
+      final parts = closing.split(':');
+      if (parts.length >= 2) {
+        closingTime = TimeOfDay(
+          hour: int.parse(parts[0]),
+          minute: int.parse(parts[1]),
+        );
+      }
+    }
 
     ownerNameController = TextEditingController(
       text: widget.booth['owner_name']?.toString() ?? '',
@@ -170,23 +234,45 @@ class _EditBoothPageState extends State<EditBoothPage> {
         );
       }
 
-      await _boothService.updateBooth(
-        boothId: widget.booth['id'].toString(),
+      final boothId = widget.booth['id'].toString();
+      final updateData = <String, dynamic>{
+        'name': nameController.text.trim(),
+        'description': descriptionController.text.trim(),
+        'category': selectedCategory!,
+        'business_type': selectedBusinessType!,
 
-        name: nameController.text.trim(),
-        description: descriptionController.text.trim(),
-        category: selectedCategory!,
-        businessType: selectedBusinessType!,
+        'owner_name': ownerNameController.text.trim(),
+        'phone': phoneController.text.trim(),
+        'email': emailController.text.trim(),
+        'instagram': instagramController.text.trim(),
+      };
 
-        ownerName: ownerNameController.text.trim(),
-        phone: phoneController.text.trim(),
-        email: emailController.text.trim(),
-        instagram: instagramController.text.trim(),
+      if (openingTime != null) {
+        updateData['opening_hours'] =
+            _formatTimeForDatabase(openingTime!);
+      }
 
-        logo: newLogo,
-        banner: newBanner,
-        boothPhoto: newBoothPhoto,
-      );
+      if (closingTime != null) {
+        updateData['closing_hours'] =
+            _formatTimeForDatabase(closingTime!);
+      }
+
+      if (newLogo != null) {
+        updateData['logo'] = newLogo;
+      }
+
+      if (newBanner != null) {
+        updateData['banner'] = newBanner;
+      }
+
+      if (newBoothPhoto != null) {
+        updateData['booth_photo'] = newBoothPhoto;
+      }
+
+      await _client
+        .from('booths')
+        .update(updateData)
+        .eq('id', boothId);
 
       if (!mounted) return;
 
@@ -394,6 +480,34 @@ class _EditBoothPageState extends State<EditBoothPage> {
                   selectedCategory = value;
                 });
               },
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: pickOpeningTime,
+                    child: Text(
+                      openingTime == null
+                          ? 'Opening Time'
+                          : 'Buka ${openingTime!.format(context)}',
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 10),
+
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: pickClosingTime,
+                    child: Text(
+                      closingTime == null
+                          ? 'Closing Time'
+                          : 'Tutup ${closingTime!.format(context)}',
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 18),

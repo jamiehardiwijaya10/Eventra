@@ -63,12 +63,23 @@ class HistoryCard extends StatelessWidget {
 
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
+              child: Image.network(
                 event.image,
                 width: 90,
                 height: 90,
                 fit: BoxFit.cover,
-              ),
+                errorBuilder: (_, __, ___) {
+                  return Container(
+                    width: 90,
+                    height: 90,
+                    color: Colors.grey.shade200,
+                    child: const Icon(
+                      Icons.image_outlined,
+                      color: Colors.grey,
+                    ),
+                  );
+                },
+              )
             ),
 
             const SizedBox(width:16),

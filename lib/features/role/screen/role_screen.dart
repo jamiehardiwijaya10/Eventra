@@ -20,9 +20,8 @@ class RoleSelectionScreen extends StatelessWidget {
 
               const SizedBox(height: 50),
 
-              /// Character
               Center(
-                child: Image.asset(
+                child: Image.network(
                   "assets/images/miyabi.png",
                   height: 180,
                 ),

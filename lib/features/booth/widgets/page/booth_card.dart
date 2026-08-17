@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../../core/theme/app_color.dart';
 
 class BoothModel {
+  final String id;
   final String image;
   final String name;
   final String category;
@@ -10,8 +11,10 @@ class BoothModel {
   final double rating;
   final int totalEvent;
   final bool isPopular;
+  final Map<String, dynamic> data;
 
   const BoothModel({
+    required this.id,
     required this.image,
     required this.name,
     required this.category,
@@ -19,6 +22,7 @@ class BoothModel {
     required this.rating,
     required this.totalEvent,
     required this.isPopular,
+    required this.data,
   });
 }
 
@@ -80,7 +84,7 @@ class BoothCard extends StatelessWidget {
               child:SizedBox(
                 height:105,
                 width:double.infinity,
-                child:Image.asset(
+                child:Image.network(
                   booth.image,
                   fit:BoxFit.cover,
                 ),

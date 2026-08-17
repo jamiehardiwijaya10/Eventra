@@ -10,6 +10,7 @@ import '../../../core/services/booth_service.dart';
 import 'product_screen/booth_products_page.dart';
 import 'edit_booth_screen/edit_booth_page.dart';
 import 'register_event_page.dart';
+import 'booth_management_detail_page.dart';
 
 class MyBoothPage extends StatefulWidget {
   const MyBoothPage({super.key});
@@ -305,7 +306,19 @@ class _MyBoothPageState extends State<MyBoothPage> {
                 isActive: isApproved,
               ),
 
-              onViewEvent: () {},
+              onViewEvent: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BoothManagementDetailPage(
+                      boothId: booth['id'].toString(),
+                      boothName: booth['name']?.toString() ?? '-',
+                      category: booth['description']?.toString() ?? '-',
+                      eventName: event?['title']?.toString() ?? 'No Event',
+                    ),
+                  ),
+                );
+              },
 
               onViewMap: () {},
 

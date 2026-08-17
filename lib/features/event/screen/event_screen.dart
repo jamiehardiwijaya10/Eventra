@@ -35,6 +35,13 @@ class _EventScreenState extends State<EventScreen> {
   List<Map<String, dynamic>> _announcements = [];
   bool _isAnnouncementLoading = true;
 
+  num _ticketPrice = 0;
+  int _joined = 0;
+  int _ticketsLeft = 0;
+
+  String _organizerName = '-';
+  String _organizerImage = '';
+
   bool _isLoading = true;
   String? _error;
 
@@ -85,10 +92,40 @@ class _EventScreenState extends State<EventScreen> {
         widget.eventId,
       );
 
+      final stats = await _eventService.getEventCustomerStats(
+        widget.eventId,
+      );
+
       if (!mounted) return;
 
       setState(() {
         _event = event;
+
+        _ticketPrice =
+            (stats['price'] as num?) ?? 0;
+
+        _joined =
+            (stats['joined'] as num?)?.toInt() ?? 0;
+
+        _ticketsLeft =
+            (stats['ticketsLeft'] as num?)?.toInt() ?? 0;
+
+        final organizer = event['profiles'];
+
+        if (organizer is Map<String, dynamic>) {
+          final firstName =
+              organizer['first_name']?.toString() ?? '';
+
+          final lastName =
+              organizer['last_name']?.toString() ?? '';
+
+          _organizerName =
+              '$firstName $lastName'.trim();
+
+          _organizerImage =
+              organizer['avatar_url']?.toString() ?? '';
+        }
+
         _isLoading = false;
       });
     } catch (e) {
@@ -184,7 +221,6 @@ class _EventScreenState extends State<EventScreen> {
 
                     EventTitleCard(
                       title: _event!['title']?.toString() ?? 'Untitled Event',
-
                       location: _event!['location']?.toString() ?? '-',
 
                       date: _formatDate(
@@ -195,14 +231,21 @@ class _EventScreenState extends State<EventScreen> {
                         _event!['end_date']?.toString(),
                       ),
 
-                      price: "\$10 USD",
-                      joined: 15782,
+                      price: 'Rp${_ticketPrice.round()}',
+
+                      joined: _joined,
+
                       rating: 4.8,
-                      ticketsLeft: 120,
-                      
-                      latitude: (_event!['latitude'] as num).toDouble(),
-                      longitude: (_event!['longitude'] as num).toDouble(),
+
+                      ticketsLeft: _ticketsLeft,
+
+                      latitude:
+                          (_event!['latitude'] as num?)?.toDouble() ?? 0,
+
+                      longitude:
+                          (_event!['longitude'] as num?)?.toDouble() ?? 0,
                     ),
+
                     const SizedBox(height: 25),
                     if (_isAnnouncementLoading)
                       const Center(
@@ -265,22 +308,16 @@ class _EventScreenState extends State<EventScreen> {
                       ),
 
                     AttendeesSection(
-                      totalMembers: 15782,
-                      avatarImages: const [
-                        "assets/images/Remielle Dan.jpg",
-                        "assets/images/Remielle Dan.jpg",
-                        "assets/images/Remielle Dan.jpg",
-                        "assets/images/Remielle Dan.jpg",
-                        "assets/images/Remielle Dan.jpg",
-                      ],
+                      totalMembers: _joined,
+                      avatarImages: const [],
                       onViewAll: () {},
                     ),
 
                     const SizedBox(height: 25),
 
                     OrganizerCard(
-                      image: "assets/images/Remielle Dan.jpg",
-                      name: "Remielle",
+                      image: _organizerImage,
+                      name: _organizerName,
                       role: "Event Organizer",
                       onChat: () {},
                       onCall: () {},
